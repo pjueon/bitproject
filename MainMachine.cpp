@@ -5,6 +5,7 @@
 #include "ImageProcessMode.h"
 
 #include <iostream>  // 디버깅용
+#include <stdexcept>
 using namespace std;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -12,10 +13,16 @@ using namespace std;
 MainMachine::MainMachine() 
 	: currentMode(mode::AutoDrive) //초기 모드
 {
-	Operation[mode::AutoDrive] = new AutoDriveMode(this);
-	Operation[mode::ManualDrive] = new ManualDriveMode(this);
-	Operation[mode::TakePhoto] = new TakePhotoMode(this);
-	Operation[mode::ImageProcess] = new ImageProcessMode(this);
+	try {
+		Operation[mode::AutoDrive] = new AutoDriveMode(this);
+		Operation[mode::ManualDrive] = new ManualDriveMode(this);
+		Operation[mode::TakePhoto] = new TakePhotoMode(this);
+		Operation[mode::ImageProcess] = new ImageProcessMode(this);
+	}
+	catch (exception& e) { // 예외 처리
+		cout << e.what() << endl;
+		throw false; // 강제 종료
+	}
 }
 
 MainMachine::~MainMachine() {
