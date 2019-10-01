@@ -21,7 +21,7 @@ MainMachine::MainMachine()
 	}
 	catch (exception& e) { // 예외 처리
 		cout << e.what() << endl;
-		throw false; // 강제 종료
+		throw false; // 강제 종료 유도
 	}
 }
 
@@ -35,13 +35,13 @@ MainMachine::~MainMachine() {
 void MainMachine::StartMainLoop() {
 	while (currentMode != mode::Quit){
 		mode nextMode = Operation[currentMode]->run();
-		SetMode(nextMode);
+		currentMode = nextMode;
 	}
 }
 //============================================================================
 
 /////////////////////////////////////////////////////////////////////////////
 //private
-void MainMachine::SetMode(mode nextMode) { currentMode = nextMode; }
+
 
 
