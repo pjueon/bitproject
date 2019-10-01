@@ -24,13 +24,10 @@ MainMachine::~MainMachine() {
 	}
 }
 
-void MainMachine::SetDebugMsg(string msg) { logBuffer << msg; }
-
 //============================================================================
 void MainMachine::StartMainLoop() {
 	while (currentMode != mode::Quit){
 		mode nextMode = Operation[currentMode]->run();
-		ShowDebugMsg();
 		SetMode(nextMode);
 	}
 }
@@ -40,8 +37,4 @@ void MainMachine::StartMainLoop() {
 //private
 void MainMachine::SetMode(mode nextMode) { currentMode = nextMode; }
 
-void MainMachine::ShowDebugMsg() {
-	cout << logBuffer.str();
-	logBuffer.str("");  // 버퍼 초기화
-}
 

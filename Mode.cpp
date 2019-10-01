@@ -11,9 +11,7 @@ OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeNa
 	if (this->logger == nullptr) throw logic_error("Error: logger가 nullptr 입니다.");
 }
 
-void OperatingMode::DebugMsg(string msg) {
-	logger->Log(msg + "\n");
-}
+void OperatingMode::DebugMsg(string msg) { logger->Log(msg); }
 
 OperatingMode::~OperatingMode() {
 	delete logger;
