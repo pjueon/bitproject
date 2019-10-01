@@ -7,8 +7,14 @@ OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeNa
       modeName(modeName), 
 	  logger(new Logger(modeName, mainMachine))
 {	
-	if (this->mainMachine == nullptr) throw logic_error("Error: mainMachine이 nullptr 입니다.");
-	if (this->logger == nullptr) throw logic_error("Error: logger가 nullptr 입니다.");
+	if (this->mainMachine == nullptr) { 
+		string ErrorMsg = "Error: modeName[" + modeName + "], mainMachine이 nullptr 입니다.";
+		throw logic_error(ErrorMsg);
+	}
+	if (this->logger == nullptr) { 
+		string ErrorMsg = "Error: modeName[" + modeName + "], logger가 nullptr 입니다.";
+		throw logic_error(ErrorMsg);
+	}
 }
 
 void OperatingMode::DebugMsg(string msg) { logger->Log(msg); }
