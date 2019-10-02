@@ -2,23 +2,27 @@
 #include "MainMachine.h"
 #include "Logger.h"
 
+////////////////////////////////////////////////////////////////////
+//public
 OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeName)
 	: mainMachine(mainMachine), 
       modeName(modeName), 
 	  logger(new Logger(modeName, mainMachine))
 {	
 	if (this->mainMachine == nullptr) { 
-		string ErrorMsg = "Error: modeName[" + modeName + "], mainMachine이 nullptr 입니다.";
+		string ErrorMsg = "Error: modeName[" + modeName + "], mainMachine is nullptr";
 		throw logic_error(ErrorMsg);
 	}
 	if (this->logger == nullptr) { 
-		string ErrorMsg = "Error: modeName[" + modeName + "], logger가 nullptr 입니다.";
+		string ErrorMsg = "Error: modeName[" + modeName + "], logger is nullptr";
 		throw logic_error(ErrorMsg);
 	}
 }
-
-void OperatingMode::DebugMsg(string msg) { logger->Log(msg); }
 
 OperatingMode::~OperatingMode() {
 	delete logger;
 }
+
+////////////////////////////////////////////////////////////////////
+//protected
+void OperatingMode::DebugMsg(string msg) { logger->Log(msg); }
