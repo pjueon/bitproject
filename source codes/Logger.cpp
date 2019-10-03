@@ -18,3 +18,4 @@ void Logger::Log(string msg) {
 	// Do Nothing on Release Build
 #endif
 }
+

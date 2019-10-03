@@ -42,6 +42,9 @@
     <ClCompile Include="..\source codes\TakePhotoMode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\source codes\DBComunication.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source codes\AutoDriveMode.h">
@@ -66,6 +69,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\source codes\TakePhotoMode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source codes\DBComunication.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
