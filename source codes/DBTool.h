@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DBCOMUNICATION_H
-#define DBCOMUNICATION_H
+#ifndef DBTOOL_H
+#define DBTOOL_H
 
 //DB 통신과 관련된 모든 기능은 여기에 넣기
 
