@@ -7,7 +7,7 @@
 OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeName)
 	: mainMachine(mainMachine), 
       modeName(modeName), 
-	  logger(new Logger(modeName, mainMachine))
+	  logger(new Logger(mainMachine, modeName))
 {	
 	if (this->mainMachine == nullptr) { 
 		string ErrorMsg = "Error: modeName[" + modeName + "], mainMachine is nullptr";
@@ -22,7 +22,3 @@ OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeNa
 OperatingMode::~OperatingMode() {
 	delete logger;
 }
-
-////////////////////////////////////////////////////////////////////
-//protected
-void OperatingMode::DebugMsg(string msg) { logger->Log(msg); }

@@ -13,7 +13,7 @@ using namespace std;
 //public
 MainMachine::MainMachine() 
 	: currentMode(mode::AutoDrive), //초기 모드
-	  logger(new Logger("MainMachine", this))
+	  logger(new Logger(this, "MainMachine"))
 {
 	try {
 		Operation[mode::AutoDrive] = new AutoDriveMode(this);
@@ -31,6 +31,7 @@ MainMachine::~MainMachine() {
 	for (auto& ModePairs : Operation) { // Operation에 할당한 메모리 모두 해제
 		delete ModePairs.second;
 	}
+	delete logger;
 }
 
 //============================================================================
@@ -44,6 +45,6 @@ void MainMachine::StartMainLoop() {
 
 /////////////////////////////////////////////////////////////////////////////
 //private
-void MainMachine::DebugMsg(string msg) { logger->Log(msg); }
+
 
 

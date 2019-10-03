@@ -3,6 +3,7 @@
 #define MODE_H
 
 #include <string>
+
 using namespace std;
 
 class MainMachine;
@@ -24,9 +25,6 @@ protected:
 	const string modeName;
 
 protected:
-	void DebugMsg(string);
-
-private:
 	Logger* const logger;  // 디버깅용 로거
 };
 
