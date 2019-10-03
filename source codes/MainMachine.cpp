@@ -3,6 +3,7 @@
 #include "ManualDriveMode.h"
 #include "TakePhotoMode.h"
 #include "ImageProcessMode.h"
+#include "Logger.h"
 
 #include <iostream>  // 디버깅용
 #include <stdexcept>
@@ -11,7 +12,8 @@ using namespace std;
 /////////////////////////////////////////////////////////////////////////////
 //public
 MainMachine::MainMachine() 
-	: currentMode(mode::AutoDrive) //초기 모드
+	: currentMode(mode::AutoDrive), //초기 모드
+	  logger(new Logger("MainMachine", this))
 {
 	try {
 		Operation[mode::AutoDrive] = new AutoDriveMode(this);
@@ -42,6 +44,6 @@ void MainMachine::StartMainLoop() {
 
 /////////////////////////////////////////////////////////////////////////////
 //private
-
+void MainMachine::DebugMsg(string msg) { logger->Log(msg); }
 
 

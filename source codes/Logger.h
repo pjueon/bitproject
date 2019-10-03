@@ -9,12 +9,12 @@ class MainMachine;
 
 class Logger {
 public:
-	Logger(string modeName, MainMachine* const mainMachine);
+	Logger(string moduleName, MainMachine* const mainMachine);
 	~Logger();
 	void Log(string msg);
 
 private:
-	const string modeName;
+	const string moduleName;
 	MainMachine* const mainMachine;
 };
 #endif
