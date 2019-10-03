@@ -18,6 +18,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source codes\AutoDriveMode.cpp" />
+    <ClCompile Include="..\source codes\HardwareControl.cpp" />
+    <ClCompile Include="..\source codes\ImageProcessMode.cpp" />
+    <ClCompile Include="..\source codes\Logger.cpp" />
+    <ClCompile Include="..\source codes\main.cpp" />
+    <ClCompile Include="..\source codes\MainMachine.cpp" />
+    <ClCompile Include="..\source codes\ManualDriveMode.cpp" />
+    <ClCompile Include="..\source codes\Mode.cpp" />
+    <ClCompile Include="..\source codes\TakePhotoMode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source codes\AutoDriveMode.h" />
+    <ClInclude Include="..\source codes\HardwareControl.h" />
+    <ClInclude Include="..\source codes\ImageProcessMode.h" />
+    <ClInclude Include="..\source codes\Logger.h" />
+    <ClInclude Include="..\source codes\MainMachine.h" />
+    <ClInclude Include="..\source codes\ManualDriveMode.h" />
+    <ClInclude Include="..\source codes\Mode.h" />
+    <ClInclude Include="..\source codes\TakePhotoMode.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{996C8ED8-B5CA-4874-99B6-EEA16890B3BD}</ProjectGuid>
@@ -122,8 +143,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
