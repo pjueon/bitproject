@@ -42,7 +42,7 @@
     <ClCompile Include="..\source codes\TakePhotoMode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\source codes\DBComunication.cpp">
+    <ClCompile Include="..\source codes\DBTool.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +71,7 @@
     <ClInclude Include="..\source codes\TakePhotoMode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\source codes\DBComunication.h">
+    <ClInclude Include="..\source codes\DBTool.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

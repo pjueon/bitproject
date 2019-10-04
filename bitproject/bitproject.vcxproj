@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source codes\AutoDriveMode.cpp" />
-    <ClCompile Include="..\source codes\DBComunication.cpp" />
+    <ClCompile Include="..\source codes\DBTool.cpp" />
     <ClCompile Include="..\source codes\HardwareControl.cpp" />
     <ClCompile Include="..\source codes\ImageProcessMode.cpp" />
     <ClCompile Include="..\source codes\Logger.cpp" />
@@ -32,7 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source codes\AutoDriveMode.h" />
-    <ClInclude Include="..\source codes\DBComunication.h" />
+    <ClInclude Include="..\source codes\DBTool.h" />
     <ClInclude Include="..\source codes\HardwareControl.h" />
     <ClInclude Include="..\source codes\ImageProcessMode.h" />
     <ClInclude Include="..\source codes\Logger.h" />
