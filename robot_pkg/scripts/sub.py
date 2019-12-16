@@ -81,10 +81,15 @@ class launch_manager():
     def launch_callback(self, data):
 
         if data.data == "load_map_mode" :
-            if self.child:
+            if self.child.pid:
                 pass
             else:
                 self.load_map_mode()
+        elif data.data == "create_map_mode" :
+            if self.child.pid:
+                pass
+            else:
+                self.create_map_mode()
         elif data.data == "load_map_mode_close":
             self.child.send_signal(signal.SIGINT)
         #os.system("roslaunch carto_mapper mapper.launch")
