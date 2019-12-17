@@ -186,9 +186,9 @@ class MainWindow(QMainWindow):
 #    def closeEvent(self, event): #X버튼 누르면 실행되는 이벤트
 if __name__ == '__main__':
 
-    options = {"pbLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.pb"),
-               "metaLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.meta"),
-               "threshold" : 0.1
+    options = {"pbLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_2class_yolo2.pb"),
+               "metaLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_2class_yolo2.meta"),
+               "threshold" : 0.5
                }
 
     tfnet = TFNet(options)
