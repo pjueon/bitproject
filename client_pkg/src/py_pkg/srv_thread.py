@@ -11,6 +11,7 @@ from PySide2.QtCore import QThread, Signal, Slot
 from PySide2.QtGui import QPixmap, QImage
 
 class Server(QThread):
+    send_server = Signal(object)
     def __init__(self, parent=None):
         super(Server, self).__init__()
         self.parent = parent
@@ -27,6 +28,7 @@ class Server(QThread):
         except rospy.ServiceException as e:
             print ("Service call failed: %s"%(e))
     '''
+    #test
     def add_trigger_init_client(self):
         rospy.wait_for_service('map_trigger')
         try:

@@ -16,10 +16,10 @@ from PySide2.QtCore import QThread, Signal, Slot, QEvent
 
 from main_ui import Ui_Form
 
-import Create_Map
-import camera_thread
-import map_reader_thread
-import srv_thread
+from py_pkg import Create_Map
+from py_pkg import camera_thread
+from py_pkg import map_reader_thread
+from py_pkg import srv_thread
 
 def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
 #========================== Map Control Button init ============================
         self.ui.Map_Reader_BTN.clicked.connect(self.read_Map)
         self.ui.Map_Delete_BTN.clicked.connect(self.delete_Map)
-        #self.ui.Map_Save_BTN.connect()
+        self.ui.Map_Save_BTN.clicked.connect(self.save_Map)
         self.ui.Map_Create_BTN.clicked.connect(self.create_Map)
 
 #========================== Camera Control Button init =========================
@@ -53,7 +53,8 @@ class MainWindow(QMainWindow):
         self.th_map = map_reader_thread.Mapper(parent = self)
         self.th_map.send_map_view.connect(self.map_View_Update)
 
-        #self.th_srv = srv_thread.Server(parent=self)
+        self.th_srv = srv_thread.Server(parent = self)
+        self.th_srv.send_server.connect(self.srv_Server)
 
 #========================== Publisher init =====================================
         self.camera_pub = rospy.Publisher("/camera_toggle", Bool, queue_size = 1)
@@ -97,18 +98,39 @@ class MainWindow(QMainWindow):
         except:
             pass
 
-    @Slot(object)
-    def camera_View_Update(self, msg):
-        try:
-            item = QGraphicsPixmapItem(msg)
-            scene = QGraphicsScene()
-            scene.addItem(item)
-            self.ui.Camera_View.setScene(scene)
-            self.ui.Camera_View.show()
-        except:
-            pass
-
 #========================== Map Control Slot Def ===============================
+    @Slot()
+    def read_Map(self):
+        self.launch_select_pub.publish("load_map_mode")
+        self.th_map.start()
+        #self.th_srv.add_trigger_init_client()
+        #self.node_pub.publish("auto_start")
+
+    @Slot()
+    def delete_Map(self):
+
+        clear = QPixmap(500, 500)
+        clear.fill(QColor("white"))
+        clear = QGraphicsPixmapItem(clear)
+        self.scene = QGraphicsScene()
+        self.scene.addItem(clear)
+        self.ui.Map_View.setScene(self.scene)
+        self.ui.Map_View.show()
+
+        self.launch_select_pub.publish("load_map_mode_close")
+        self.th_map.quit()
+
+    @Slot()
+    def create_Map(self):
+        self.launch_select_pub.publish("create_map_mode")
+        self.ui.Map_View.installEventFilter(self)
+        self.ui.Map_View.setFocus()
+
+    @Slot()
+    def save_Map(self):
+        self.launch_select_pub.publish("create_map_mode_save")
+
+#========================== Thread Data Req, Res Slot Def ===============================
     @Slot(object)
     def map_View_Update(self, msg):
         try:
@@ -120,31 +142,22 @@ class MainWindow(QMainWindow):
         except:
             pass
 
-    @Slot()
-    def read_Map(self):
-        self.launch_select_pub.publish("load_map_mode")
-        self.th_map.start()
-        #self.th_srv.add_trigger_init_client()
-        #self.node_pub.publish("auto_start")
-
-    @Slot()
-    def delete_Map(self):
-        '''
-        clear = QPixmap(16, 16)
-        clear.fill(QColor("white"))
-        self.scene = QGraphicsScene()
-        self.scene.addItem(clear)
-        self.ui.Map_View.setScene(self.scene)
-        self.ui.Map_View.show()
-        '''
-        self.launch_select_pub.publish("load_map_mode_close")
-        self.th_map.quit()
-
-    @Slot()
-    def create_Map(self):
-        self.ui.Map_View.installEventFilter(self)
-        self.ui.Map_View.setFocus()
-
+    @Slot(object)
+    def camera_View_Update(self, msg):
+        try:
+            item = QGraphicsPixmapItem(msg)
+            scene = QGraphicsScene()
+            scene.addItem(item)
+            self.ui.Camera_View.setScene(scene)
+            self.ui.Camera_View.show()
+        except:
+            pass
+    @Slot(object)
+    def srv_Server(self, msg):
+        try:
+            pass
+        except:
+            pass
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Close:
             print ("================ User has clicked the red x on the main window =================\n\n\n")

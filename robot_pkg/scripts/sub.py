@@ -58,7 +58,7 @@ class launch_manager():
         rospy.spin()
 
     def load_map_mode(self):
-        self.child = subprocess.Popen(["roslaunch","mapper_pkg","load_map_mode.launch"])
+        self.child = subprocess.Popen(["roslaunch", "mapper_pkg", "load_map_mode.launch"])
         #child.wait() #You can use this line to block the parent process untill the child process finished.
         #print("parent process")
         #print(self.child.poll())
@@ -68,6 +68,7 @@ class launch_manager():
 
     def create_map_mode(self):
         self.child = subprocess.Popen(["roslaunch","mapper_pkg","create_map_mode.launch"])
+
 
     def launch_callback(self, data):
         if self.flag == True :
