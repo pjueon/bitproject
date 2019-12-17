@@ -17,7 +17,7 @@ from PySide2.QtCore import QThread, Signal, Slot, QEvent
 from main_ui import Ui_Form
 
 import Create_Map
-import camera_thread
+import camera_thread_test
 import map_reader_thread
 import srv_thread
 
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         self.ui.Camera_Toggle_BTN.clicked.connect(self.Camera_Toggle_BTN)
 
 #========================== Thread init ========================================
-        self.th_camera = camera_thread.Worker(parent=self, tfnet=tfnet)
+        self.th_camera = camera_thread_test.Worker(parent=self, tfnet=tfnet)
         self.th_camera.send_camera_view.connect(self.camera_View_Update)
 
         self.th_map = map_reader_thread.Mapper(parent=self)
@@ -186,8 +186,8 @@ class MainWindow(QMainWindow):
 #    def closeEvent(self, event):
 if __name__ == '__main__':
 
-    options = {"pbLoad": fixpath("~/bit/src/py_test/src/darkflow/built_graph/book_1class_yolo2.pb"),
-               "metaLoad": fixpath("~/bit/src/py_test/src/darkflow/built_graph/book_1class_yolo2.meta"),
+    options = {"pbLoad": fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.pb"),
+               "metaLoad": fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.meta"),
                "threshold": 0.1
                }
 

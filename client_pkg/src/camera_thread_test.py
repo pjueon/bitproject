@@ -2,7 +2,7 @@ import rospy
 import numpy as np
 import cv2
 import time
-from py_test.msg import Num
+from bit_custom_msgs.msg import YOLOBoxInfo
 from sensor_msgs.msg import CompressedImage, Image
 from PySide2.QtCore import QThread, Signal, Slot
 from PySide2.QtGui import QPixmap, QImage
@@ -19,7 +19,7 @@ class Worker(QThread):
         self.predic_flag = 0
         self.resize_width = 720
         self.resize_height = 480
-        self.cappub = rospy.Publisher('chatter',Num,queue_size=20)
+        self.cappub = rospy.Publisher('chatter',YOLOBoxInfo,queue_size=20)
 
         rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
 
@@ -82,7 +82,7 @@ class Worker(QThread):
             self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
 
         if self.bound_flag:
-            self.sendData = Num()  
+            self.sendData = YOLOBoxInfo()
 
             self.tlx = '{}'.format(self.top_x)
             self.tly = '{}'.format(self.top_y)
@@ -97,7 +97,7 @@ class Worker(QThread):
 
 
             self.cappub.publish(self.sendData)
-            print("box_info_publishing~~!!")        
+            print("box_info_publishing~~!!")
 
 
         return self.newImage

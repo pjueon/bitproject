@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  bit_custom_msgs
   message_generation
   tf
 )
@@ -50,8 +51,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 add_message_files(
-   FILES
-#   person.msg
+
+#   FILES
+#   YOLOBoxInfo.msg
 #   Message2.msg
 )
 
@@ -74,6 +76,7 @@ add_message_files(
 generate_messages(
    DEPENDENCIES
    std_msgs
+   bit_custom_msgs
 )
 
 ################################################
