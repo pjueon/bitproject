@@ -28,10 +28,16 @@ AutoDriveMode::~AutoDriveMode() {
 	delete pathFinder;
 }
 
-
+//----------------
 void AutoDriveMode::init(){
 	getNextRoute();
 }
+
+
+//----------------
+void AutoDriveMode::test(){
+	logger->DebugMsg("This is a test code.");
+}  
 
 //======================================================================
 mode AutoDriveMode::run() { 

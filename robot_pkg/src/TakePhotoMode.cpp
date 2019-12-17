@@ -50,6 +50,12 @@ void TakePhotoMode::setInitYaw(double angle){
 };
 
 
+//----------------
+void TakePhotoMode::test(){
+	logger->DebugMsg("This is a test code.");
+}  
+
+
 //======================================================================
 mode TakePhotoMode::run() { 
 	logger->DebugMsg("run() start!");

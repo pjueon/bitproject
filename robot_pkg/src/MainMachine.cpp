@@ -99,7 +99,7 @@ void MainMachine::StartMainLoop() {
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
 	sleep(1000);
-	Operation[mode::TakePhoto]->init();
+	Operation[mode::TakePhoto]->test();
 
 	logger->DebugMsg("===test end===");
 }
@@ -127,13 +127,8 @@ bool MainMachine::isDestBookshelf() const { return destinations[destIdx].bookshe
 int MainMachine::getBookshelfID() const {return destinations[destIdx].bookshelfID; }
 
 
-void MainMachine::setBookshelfImg(const cv::Mat& img){
-	//img.copyTo(bookshelfImg);
-	bookshelfImg = img; // [WARN] shallow copy
-}
-
-// shallow copy
-cv::Mat MainMachine::getBookshelfImg(){ return bookshelfImg; } 
+void MainMachine::setBookshelfImg(const cv::Mat& img){	bookshelfImg = img; } // [WARN] shallow copy
+cv::Mat MainMachine::getBookshelfImg(){ return bookshelfImg; } // [WARN] shallow copy
 
 	
 

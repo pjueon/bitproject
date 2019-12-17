@@ -25,6 +25,11 @@ void ImageProcessMode::init(){
 	logger->DebugMsg("init() called");
 }
 
+//----------------
+void ImageProcessMode::test(){
+	logger->DebugMsg("This is a test code.");
+}  
+
 //======================================================================
 mode ImageProcessMode::run() { 
 	logger->DebugMsg("run() start!");

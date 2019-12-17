@@ -13,7 +13,9 @@ public:
 	explicit AutoDriveMode(MainMachine* const);
 	~AutoDriveMode() override;
 	mode run() override;
-	virtual void init() override;  
+	void init() override;
+	void test() override;  
+  
 	void setRoute(const std::vector<std::pair<double, double>>& route);
 
 private:  

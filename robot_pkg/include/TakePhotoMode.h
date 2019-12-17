@@ -23,7 +23,8 @@ public:
 	explicit TakePhotoMode(MainMachine* const);
 	~TakePhotoMode() override;
 	mode run() override;
-	virtual void init() override;  
+	void init() override;
+	void test() override;  
 
 	void setInitYaw(double);
 

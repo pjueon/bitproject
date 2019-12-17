@@ -15,8 +15,14 @@ StandbyMode::~StandbyMode() {}
 
 //----------------
 void StandbyMode::init(){
-	logger->DebugMsg("init()!!!");
+	logger->DebugMsg("init() called");
 }
+
+//----------------
+void StandbyMode::test(){
+	logger->DebugMsg("This is a test code.");
+}  
+
 
 //======================================================================
 mode StandbyMode::run() { 

@@ -9,7 +9,8 @@ public:
 	explicit StandbyMode(MainMachine* const);
 	~StandbyMode() override;
 	mode run() override;
-	virtual void init() override;  
+	void init() override;
+	void test() override;    
 
 private:  
 
