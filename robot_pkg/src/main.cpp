@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
 	
 	MainMachine mainMachine(n);
 
-	//mainMachine.StartMainLoop();
-	mainMachine.test();
+	mainMachine.StartMainLoop();
+	//mainMachine.test();
 	
 	cout << "program end!" << endl;
 
