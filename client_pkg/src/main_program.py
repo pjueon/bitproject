@@ -17,7 +17,7 @@ from PySide2.QtCore import QThread, Signal, Slot, QEvent
 from main_ui import Ui_Form
 
 import Create_Map
-import camera_thread_test
+import camera_thread
 import map_reader_thread
 import srv_thread
 
@@ -47,10 +47,10 @@ class MainWindow(QMainWindow):
         self.ui.Camera_Toggle_BTN.clicked.connect(self.Camera_Toggle_BTN)
 
 #========================== Thread init ========================================
-        self.th_camera = camera_thread_test.Worker(parent=self, tfnet=tfnet)
+        self.th_camera = camera_thread.Worker(parent = self, tfnet = tfnet)
         self.th_camera.send_camera_view.connect(self.camera_View_Update)
 
-        self.th_map = map_reader_thread.Mapper(parent=self)
+        self.th_map = map_reader_thread.Mapper(parent = self)
         self.th_map.send_map_view.connect(self.map_View_Update)
 
         #self.th_srv = srv_thread.Server(parent=self)
@@ -183,16 +183,16 @@ class MainWindow(QMainWindow):
             # pass the event on to the parent class
             return QMainWindow.eventFilter(self, obj, event)
 
-#    def closeEvent(self, event):
+#    def closeEvent(self, event): #X버튼 누르면 실행되는 이벤트
 if __name__ == '__main__':
 
-    options = {"pbLoad": fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.pb"),
-               "metaLoad": fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.meta"),
-               "threshold": 0.1
+    options = {"pbLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.pb"),
+               "metaLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_3class_yolo2.meta"),
+               "threshold" : 0.1
                }
 
     tfnet = TFNet(options)
-    rospy.init_node('ff')
+    rospy.init_node('main_program')
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec_())
