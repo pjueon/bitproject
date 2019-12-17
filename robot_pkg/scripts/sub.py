@@ -43,22 +43,17 @@ if __name__ == "__main__":
 '''
 import sys
 import rospy
-import cv2
-import os
 import roslaunch
-
-
-import rospy
 import subprocess
 import signal
 
-import sys
 from std_msgs.msg import Bool, String
 
 class launch_manager():
     def __init__(self):
         rospy.Subscriber("/launch_select", String, self.launch_callback)
         rospy.spin()
+        self.flag = False
 
     def load_map_mode(self):
         self.child = subprocess.Popen(["roslaunch","mapper_pkg","load_map_mode.launch"])
@@ -79,22 +74,22 @@ class launch_manager():
         print ("The PID of child:", self.child.pid)
 
     def launch_callback(self, data):
-
-        if data.data == "load_map_mode" :
-            if self.child.pid:
-                pass
-            else:
+        if self.flag == False:
+            pass
+        else:
+            if data.data == "load_map_mode" :
+                self.flag = True
                 self.load_map_mode()
-        elif data.data == "create_map_mode" :
-            if self.child.pid:
-                pass
-            else:
+
+            elif data.data == "create_map_mode" :
+                self.flag = True
                 self.create_map_mode()
-        elif data.data == "load_map_mode_close":
-            self.child.send_signal(signal.SIGINT)
+
+            elif data.data == "load_map_mode_close":
+                self.child.send_signal(signal.SIGINT)
         #os.system("roslaunch carto_mapper mapper.launch")
 if __name__ == "__main__":
-    rospy.init_node("launch_manager", anonymous=True)
+    rospy.init_node("launch_manager")
     launch_manager()
     print("End Process")
     #image_pub = rospy.Publisher("image_topic", Image)#none encoding

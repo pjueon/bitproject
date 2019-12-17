@@ -17,9 +17,9 @@ class Worker(QThread):
         self.tfnet = tfnet
         self.bridge = CvBridge()
         self.predic_flag = 0
-        self.resize_width = 970
+        self.resize_width = 870
         self.resize_height = 630
-        self.cappub = rospy.Publisher('chatter', YOLOBoxInfo, queue_size = 20)
+        self.cappub = rospy.Publisher('/boxinfo_topic', YOLOBoxInfo, queue_size = 20)
 
         rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
 
