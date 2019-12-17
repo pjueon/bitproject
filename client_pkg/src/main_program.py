@@ -53,7 +53,8 @@ class MainWindow(QMainWindow):
         self.th_map = map_reader_thread.Mapper(parent = self)
         self.th_map.send_map_view.connect(self.map_View_Update)
 
-        #self.th_srv = srv_thread.Server(parent=self)
+        self.th_srv = srv_thread.Server(parent = self)
+        self.th_srv.send_server.connect(self.srv_Server)
 
 #========================== Publisher init =====================================
         self.camera_pub = rospy.Publisher("/camera_toggle", Bool, queue_size = 1)
@@ -97,17 +98,6 @@ class MainWindow(QMainWindow):
         except:
             pass
 
-    @Slot(object)
-    def camera_View_Update(self, msg):
-        try:
-            item = QGraphicsPixmapItem(msg)
-            scene = QGraphicsScene()
-            scene.addItem(item)
-            self.ui.Camera_View.setScene(scene)
-            self.ui.Camera_View.show()
-        except:
-            pass
-
 #========================== Map Control Slot Def ===============================
     @Slot()
     def read_Map(self):
@@ -140,6 +130,7 @@ class MainWindow(QMainWindow):
     def save_Map(self):
         self.launch_select_pub.publish("create_map_mode_save")
 
+#========================== Thread Data Req, Res Slot Def ===============================
     @Slot(object)
     def map_View_Update(self, msg):
         try:
@@ -151,6 +142,22 @@ class MainWindow(QMainWindow):
         except:
             pass
 
+    @Slot(object)
+    def camera_View_Update(self, msg):
+        try:
+            item = QGraphicsPixmapItem(msg)
+            scene = QGraphicsScene()
+            scene.addItem(item)
+            self.ui.Camera_View.setScene(scene)
+            self.ui.Camera_View.show()
+        except:
+            pass
+    @Slot(object)
+    def srv_Server(self, msg):
+        try:
+            pass
+        except:
+            pass
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Close:
             print ("================ User has clicked the red x on the main window =================\n\n\n")

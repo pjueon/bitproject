@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 '''
+#test
 import os
 import roslaunch
 import sys
@@ -40,10 +41,11 @@ def add_two_ints_server():
 if __name__ == "__main__":
     rospy.init_node('add_two_ints_server', anonymous=True)
     add_two_ints_server()
+
 '''
-import sys
-import rospy
 import roslaunch
+
+import rospy
 import subprocess
 import signal
 
@@ -51,32 +53,33 @@ from std_msgs.msg import Bool, String
 
 class launch_manager():
     def __init__(self):
+        self.flag = False
         rospy.Subscriber("/launch_select", String, self.launch_callback)
         rospy.spin()
-        self.flag = False
 
     def load_map_mode(self):
-        self.child = subprocess.Popen(["roslaunch","mapper_pkg","load_map_mode.launch"])
+        self.child = subprocess.Popen(["roslaunch", "mapper_pkg", "load_map_mode.launch"])
         #child.wait() #You can use this line to block the parent process untill the child process finished.
-        print("parent process")
-        print(self.child.poll())
+        #print("parent process")
+        #print(self.child.poll())
 
-        rospy.loginfo('The PID of child: %d', self.child.pid)
-        print ("The PID of child:", self.child.pid)
+        #rospy.loginfo('The PID of child: %d', self.child.pid)
+        #print ("The PID of child:", self.child.pid)
 
     def create_map_mode(self):
-        self.child = subprocess.Popen(["roslaunch","mapper_pkg","create_map_mode.launch"])
-        #child.wait() #You can use this line to block the parent process untill the child process finished.
-        print("parent process")
-        print(self.child.poll())
-
-        rospy.loginfo('The PID of child: %d', self.child.pid)
-        print ("The PID of child:", self.child.pid)
+        self.child = subprocess.Popen(["roslaunch", "mapper_pkg", "create_map_mode.launch"])
 
     def launch_callback(self, data):
-        if self.flag == False:
-            pass
+        if self.flag == True :
+            if data.data == "load_map_mode_close":
+
+                self.child.send_signal(signal.SIGINT)
+                self.flag = False
+            elif data.data == "create_map_mode_save":
+                pass
+
         else:
+
             if data.data == "load_map_mode" :
                 self.flag = True
                 self.load_map_mode()
@@ -85,11 +88,9 @@ class launch_manager():
                 self.flag = True
                 self.create_map_mode()
 
-            elif data.data == "load_map_mode_close":
-                self.child.send_signal(signal.SIGINT)
-        #os.system("roslaunch carto_mapper mapper.launch")
+
 if __name__ == "__main__":
-    rospy.init_node("launch_manager")
+    rospy.init_node("launch_manager", anonymous=True)
+    print("Start Process")
     launch_manager()
     print("End Process")
-    #image_pub = rospy.Publisher("image_topic", Image)#none encoding
