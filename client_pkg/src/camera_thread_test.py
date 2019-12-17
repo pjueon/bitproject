@@ -8,6 +8,7 @@ from PySide2.QtCore import QThread, Signal, Slot
 from PySide2.QtGui import QPixmap, QImage
 from cv_bridge import CvBridge, CvBridgeError
 
+
 class Worker(QThread):
     send_camera_view = Signal(object)
     def __init__(self, parent=None, tfnet=None):
