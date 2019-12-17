@@ -5,7 +5,7 @@ import rospy
 import os
 import roslaunch
 
-from py_test.srv import *
+from client_pkg.srv import *
 from cartographer_ros_msgs.srv import *
 from PySide2.QtCore import QThread, Signal, Slot
 from PySide2.QtGui import QPixmap, QImage
