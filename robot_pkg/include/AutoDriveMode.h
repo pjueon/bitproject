@@ -1,6 +1,6 @@
 #pragma once
-#ifndef AUTODRIVEMODE_H
-#define AUTODRIVEMODE_H
+#ifndef AUTO_DRIVEMODE_H
+#define AUTO_DRIVEMODE_H
 
 #include "Mode.h"
 #include <vector>

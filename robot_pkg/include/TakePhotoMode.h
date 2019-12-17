@@ -1,11 +1,13 @@
 #pragma once
-#ifndef TAKEPHOTOMODE_H
-#define TAKEPHOTOMODE_H
+#ifndef TAKE_PHOTOMODE_H
+#define TAKE_PHOTOMODE_H
 
 #include "Mode.h"
 
 #include <vector>
+#include <array>
 #include <utility>
+
 
 #include <opencv2/opencv.hpp>
 
@@ -29,6 +31,7 @@ private:
 	double initYaw;
 	CoordinateConverter* XYConverter;
 	cv::Mat getPhoto();
+	std::array<double, 4> getYOLOBoxInfo();
 	
 
 	void rotateTo(double angle);

@@ -21,11 +21,8 @@ int main(int argc, char **argv) {
 	
 	MainMachine mainMachine(n);
 
-	mainMachine.StartMainLoop();
+	//mainMachine.StartMainLoop();
 	mainMachine.test();
-
-	//bit_custom_msgs::YOLOBoxInfo info;
-
 	
 	cout << "program end!" << endl;
 

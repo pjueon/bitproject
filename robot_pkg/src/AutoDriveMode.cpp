@@ -12,7 +12,6 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
 
 constexpr double PI = 3.141592;
 

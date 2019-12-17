@@ -6,12 +6,14 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
-
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/MapMetaData.h"
 #include "sensor_msgs/CompressedImage.h"
 
+#include "bit_custom_msgs/YOLOBoxInfo.h"
+
 #include <vector>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <algorithm>
@@ -86,15 +88,31 @@ mode TakePhotoMode::run() {
 
 	mainMachine->updatePosition();
 	logger->DebugMsg("final yaw : ", mainMachine->getYaw());
-	
-	sleep(5000);
-	logger->DebugMsg("\n\n============\nTook a Photo!!!!!!\n============\n");
+
+
+	mainMachine->stop();	
 	sleep(5000);
 
+	auto boxinfo = getYOLOBoxInfo();
+	auto frame = getPhoto();
+	
+	logger->DebugMsg("image size: ", frame.cols, " * ", frame.rows);
+	logger->DebugMsg("boxinfo: ", boxinfo[0], ", ", boxinfo[1], ", ", boxinfo[2], ", ", boxinfo[3]);
+	
+	Rect box(int(boxinfo[0]*frame.cols), 
+			 int(boxinfo[1]*frame.rows), 
+			 int((boxinfo[2]-boxinfo[0])*frame.cols), 
+			 int((boxinfo[3]-boxinfo[1])*frame.rows) );
+
+	mainMachine->setBookshelfImg(frame(box));
+	logger->DebugMsg("\n\n============\nTook a Photo!!!!!!\n============\n");
+
+/*	
 	bool doesNextExist = mainMachine->nextDestination();
 	if(!doesNextExist) return mode::Quit;
-	
-	return mode::AutoDrive;
+*/	
+	return mode::ImageProcess;
+	//return mode::AutoDrive;
 }
 //======================================================================
 
@@ -392,7 +410,6 @@ Mat TakePhotoMode::getFrontLaserScan(double frontRange, double sideRange){
 //----------------
 cv::Mat TakePhotoMode::getPhoto() {
 	mainMachine->cameraOn();
-	logger->DebugMsg("On!!");
 
 	auto cameraMsg = ros::topic::waitForMessage<sensor_msgs::CompressedImage>("/camera_topic", ros::Duration(10.0));
 
@@ -409,3 +426,34 @@ cv::Mat TakePhotoMode::getPhoto() {
 	}		
 }
 
+
+//---------------
+std::array<double, 4> TakePhotoMode::getYOLOBoxInfo(){
+	logger->DebugMsg("getYOLOBoxInfo() called!");
+	using msgType = boost::shared_ptr<const bit_custom_msgs::YOLOBoxInfo>;
+	vector<msgType> msgs;
+	
+	for(int i = 0; i < 5; i++){
+		auto msg = ros::topic::waitForMessage<bit_custom_msgs::YOLOBoxInfo>("/boxinfo_topic", ros::Duration(5.0));
+		if(msg != nullptr) msgs.push_back(msg);
+	}
+
+	if(msgs.size() == 0) return {0.0, 0.0, 1.0, 1.0};
+	 
+	double tl_x = 0.0, tl_y = 0.0, br_x = 0.0, br_y = 0.0;	
+
+	for(const auto& msg : msgs){
+		tl_x += msg->tl_x;
+		tl_y += msg->tl_y;
+		br_x += msg->br_x;
+		br_y += msg->br_y;
+	}
+
+	tl_x /= msgs.size();
+	tl_y /= msgs.size();
+	br_x /= msgs.size();
+	br_y /= msgs.size();
+		
+	return { tl_x, tl_y, br_x, br_y };
+
+}
