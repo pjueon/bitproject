@@ -5,6 +5,8 @@
 #include "UtilityFunctions.h"
 #include "Mode.h"
 
+//#include "bit_custom_msgs/YOLOBoxInfo.h"
+
 #include <vector>
 #include <utility>
 #include <iostream>
@@ -20,7 +22,10 @@ int main(int argc, char **argv) {
 	MainMachine mainMachine(n);
 
 	mainMachine.StartMainLoop();
-	//mainMachine.test();
+	mainMachine.test();
+
+	//bit_custom_msgs::YOLOBoxInfo info;
+
 	
 	cout << "program end!" << endl;
 
