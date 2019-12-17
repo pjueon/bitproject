@@ -123,6 +123,8 @@ std::vector<std::pair<double, double>> PathFinder::getRoute(){
 	auto originRoute = astar->findRoute();
 	
 	vector<pair<double, double>> route;
+	route.reserve(originRoute.size());
+
 	std::transform(originRoute.begin(), originRoute.end(), std::back_inserter(route), [this](auto p){ return toRealXY(p.first, p.second); });
 	
 	if(auto [x, y] = toMapXY(realGoal_x, realGoal_y); mapBuilder->getPaddedMapValue(x, y) == true) route.push_back({realGoal_x, realGoal_y});

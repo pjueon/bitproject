@@ -10,7 +10,6 @@
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/MapMetaData.h"
 #include "sensor_msgs/CompressedImage.h"
-#include "cv_bridge/cv_bridge.h"
 
 #include <vector>
 #include <cmath>
@@ -18,8 +17,6 @@
 #include <algorithm>
 #include <tuple>
 #include <opencv2/opencv.hpp>
-
-
 
 
 using namespace std;
@@ -394,7 +391,6 @@ Mat TakePhotoMode::getFrontLaserScan(double frontRange, double sideRange){
 
 //----------------
 cv::Mat TakePhotoMode::getPhoto() {
-	sleep(1000);
 	mainMachine->cameraOn();
 	logger->DebugMsg("On!!");
 
