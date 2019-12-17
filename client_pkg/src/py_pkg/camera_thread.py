@@ -19,7 +19,7 @@ class Worker(QThread):
         self.predic_flag = 0
         self.resize_width = 870
         self.resize_height = 630
-        self.cappub = rospy.Publisher('chatter', YOLOBoxInfo, queue_size = 20)
+        self.cappub = rospy.Publisher('/boxinfo_topic', YOLOBoxInfo, queue_size = 20)
 
         rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
 
@@ -75,7 +75,7 @@ class Worker(QThread):
             self.label = result['label'] + " " + str(round(self.confidence, 3))
             self.class_label = result['label']
             self.text = '{}: {:.0f}%'.format(self.class_label, self.confidence * 100)
-            if self.class_label == 'bookshelf' and (self.btm_y - self.top_y) * (self.btm_x - self.top_x) >= 20000:
+            if self.class_label == 'bookshelf' and (self.btm_y - self.top_y) * (self.btm_x - self.top_x) >= self.resize_width * self.resize_height * 0.2:
                 self.bound_flag = True
 
             if self.class_label == 'bookshelf':
@@ -90,15 +90,10 @@ class Worker(QThread):
         if self.bound_flag:
             self.sendData = YOLOBoxInfo()
 
-            self.tlx = '{}'.format(self.top_x)
-            self.tly = '{}'.format(self.top_y)
-            self.brx = '{}'.format(self.btm_x)
-            self.bry = '{}'.format(self.btm_y)
-
-            self.sendData.tl_x = round(float(self.tlx) / self.resize_width, 5)
-            self.sendData.tl_y = round(float(self.tly) / self.resize_height, 5)
-            self.sendData.br_x = round(float(self.brx) / self.resize_width, 5)
-            self.sendData.br_y = round(float(self.bry) / self.resize_height, 5)
+            self.sendData.tl_x = round(self.top_x / self.resize_width, 5)
+            self.sendData.tl_y = round(self.top_y / self.resize_height, 5)
+            self.sendData.br_x = round(self.btm_x / self.resize_width, 5)
+            self.sendData.br_y = round(self.btm_y / self.resize_height, 5)
             self.sendData.confidence = round(self.confidence.item(), 5)
 
 
