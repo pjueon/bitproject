@@ -242,7 +242,7 @@ void ImageDB::load(const std::string& filename) {
 
 	ifstream fin(filename);
 	if (!fin.is_open()) {
-		cerr << "couldn't open" << filename << endl;
+		cerr << "fail to open " << filename << endl;
 		return;
 	}
 
