@@ -2,6 +2,7 @@
 #include <thread>
 #include <cmath>
 #include <vector>
+#include <numeric>
 #include <opencv2/opencv.hpp>
 
 #include "UtilityFunctions.h"
@@ -70,7 +71,7 @@ void MatTo2DVector(const Mat& src, vector<vector<unsigned char>>& output) {
 
 //----------------------------------------------------------
 void resizeIfNecessary(const Mat& input, Mat& output) {
-	constexpr int minimumLength = 100; // px
+	constexpr int minimumLength = 150; // px
 	constexpr int maximumLength = 1500; // px
 
 	const int img_width = input.cols;
