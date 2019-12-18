@@ -11,7 +11,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class Worker(QThread):
     send_camera_view = Signal(object)
-    def __init__(self, parent=None, tfnet=None):
+    def __init__(self, parent = None, tfnet = None):
         super(Worker, self).__init__()
         #self.main = parent
         self.tfnet = tfnet
@@ -19,7 +19,7 @@ class Worker(QThread):
         self.predic_flag = 0
         self.resize_width = 720
         self.resize_height = 480
-        self.cappub = rospy.Publisher('chatter',YOLOBoxInfo,queue_size=20)
+        self.cappub = rospy.Publisher('chatter', YOLOBoxInfo, queue_size = 20)
 
         rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
 
@@ -33,7 +33,7 @@ class Worker(QThread):
             self.cv_image = self.bridge.compressed_imgmsg_to_cv2(data)# encoding
 #            self.results = self.tfnet.return_predict(self.cv_image)
 #            self.cv_image = self.boxing(self.cv_image, self.results)
-            self.cv_image = cv2.resize(self.cv_image, dsize=(self.resize_width, self.resize_height))
+            self.cv_image = cv2.resize(self.cv_image, dsize = (self.resize_width, self.resize_height))
             self.stime = time.time()
             if(self.predic_flag == 0):
                 self.results = self.tfnet.return_predict(self.cv_image)
@@ -69,15 +69,15 @@ class Worker(QThread):
             self.label = result['label'] + " " + str(round(self.confidence, 3))
             self.class_label = result['label']
             self.text = '{}: {:.0f}%'.format(self.class_label, self.confidence * 100)
-            if self.class_label == 'bookshelf' and (self.btm_y-self.top_y)*(self.btm_x-self.top_x)>=20000:
+            if self.class_label == 'bookshelf' and (self.btm_y-self.top_y) * (self.btm_x-self.top_x) >= 20000:
                 self.bound_flag = True
 
             if self.class_label == 'bookshelf':
-                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255,0,0), 3)
+                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255, 0, 0), 3)
             elif self.class_label == 'desktop':
-                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (0,0,255), 3)
+                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (0, 0, 255), 3)
             else :
-                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255,255,255), 3)
+                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255, 255, 255), 3)
 
             self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
 
@@ -89,11 +89,11 @@ class Worker(QThread):
             self.brx = '{}'.format(self.btm_x)
             self.bry = '{}'.format(self.btm_y)
 
-            self.sendData.tl_x = round(float(self.tlx)/self.resize_width,5)
-            self.sendData.tl_y = round(float(self.tly)/self.resize_height,5)
-            self.sendData.br_x = round(float(self.brx)/self.resize_width,5)
-            self.sendData.br_y = round(float(self.bry)/self.resize_height,5)
-            self.sendData.confidence = round(self.confidence.item(),5)
+            self.sendData.tl_x = round(float(self.tlx) / self.resize_width, 5)
+            self.sendData.tl_y = round(float(self.tly) / self.resize_height, 5)
+            self.sendData.br_x = round(float(self.brx) / self.resize_width, 5)
+            self.sendData.br_y = round(float(self.bry) / self.resize_height, 5)
+            self.sendData.confidence = round(self.confidence.item(), 5)
 
 
             self.cappub.publish(self.sendData)
