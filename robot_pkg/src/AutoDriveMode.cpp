@@ -12,7 +12,6 @@
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
 
 constexpr double PI = 3.141592;
 
@@ -29,10 +28,16 @@ AutoDriveMode::~AutoDriveMode() {
 	delete pathFinder;
 }
 
-
+//----------------
 void AutoDriveMode::init(){
 	getNextRoute();
 }
+
+
+//----------------
+void AutoDriveMode::test(){
+	logger->DebugMsg("This is a test code.");
+}  
 
 //======================================================================
 mode AutoDriveMode::run() { 

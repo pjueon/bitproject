@@ -9,6 +9,8 @@
 #include "ros/ros.h"
 #include "tf/transform_listener.h"
 
+#include <opencv2/opencv.hpp>
+
 
 enum class mode;
 class OperatingMode;
@@ -61,6 +63,8 @@ public:
 	void cameraOn() const;
 	void cameraOff() const;
 
+	void setBookshelfImg(const cv::Mat&);
+	cv::Mat getBookshelfImg();
 
 private:
 	mode currentMode;
@@ -82,6 +86,8 @@ private:
 	std::vector<DestinationInfo> destinations;
 
 	int destIdx;
+
+	cv::Mat bookshelfImg;
 
 
 };

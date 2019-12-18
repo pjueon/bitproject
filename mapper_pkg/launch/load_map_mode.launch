@@ -13,7 +13,7 @@
 
   <node name="lsm303" pkg="robot_pkg" type="lsm303.py" output="screen"/>
   <node name="motor_control_node" pkg="robot_pkg" type="motor_control_node.py" output="screen"/>
-  <node name="camera_node" pkg="robot_pkg" type="test.py" output="screen"/>
+  <node name="camera_node" pkg="robot_pkg" type="camera_node.py" output="screen"/>
 
   <include file="$(find ydlidar)/launch/lidar.launch" />
   <node name="rviz" pkg="rviz" type="rviz"/>

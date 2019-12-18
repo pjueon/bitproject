@@ -34,7 +34,7 @@ class camera_Worker(threading.Thread):
                 self.ret_val, self.img = self.cap.read()
                 #image_pub.publish(bridge.cv2_to_imgmsg(img, "bgr8"))#none encoding
                 self.image_pub.publish(self.bridge.cv2_to_compressed_imgmsg(self.img))#encoding defult jpg
-                self.wait_flag.wait()# Python Threading.Event flag가 True가 될 때까지 기다림 초기 Flag는 True이기 때문에 넘어감
+                self.wait_flag.wait() 
             print("Close Camera")
 
         else:
@@ -76,9 +76,9 @@ def callback(data):
             toggle.flag = data.data
             print("callback data : ", data.data)
             if data.data and not toggle.wait_flag.is_set():
-                toggle.wait_flag.set()# Threading.Event의 Flag를 True로 set함
+                toggle.wait_flag.set()
             elif not data.data and toggle.wait_flag.is_set():
-                toggle.wait_flag.clear()# Threading.Event의 Flag를 False로 clear함
+                toggle.wait_flag.clear()
             else:
                 pass
     except:

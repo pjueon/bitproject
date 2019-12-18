@@ -22,10 +22,7 @@ int main(int argc, char **argv) {
 	MainMachine mainMachine(n);
 
 	mainMachine.StartMainLoop();
-	mainMachine.test();
-
-	//bit_custom_msgs::YOLOBoxInfo info;
-
+	//mainMachine.test();
 	
 	cout << "program end!" << endl;
 

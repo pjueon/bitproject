@@ -22,3 +22,8 @@ OperatingMode::OperatingMode(MainMachine* const mainMachine, const string modeNa
 OperatingMode::~OperatingMode() {
 	delete logger;
 }
+
+
+void OperatingMode::test(){
+	logger->DebugMsg("Thi is a test function");
+}

@@ -3,7 +3,7 @@
 #include "AutoDriveMode.h"
 
 #include "TakePhotoMode.h"
-//#include "ImageProcessMode.h"
+#include "ImageProcessMode.h"
 
 #include "Logger.h"
 #include "UtilityFunctions.h"
@@ -32,11 +32,7 @@ MainMachine::MainMachine(ros::NodeHandle& n)
 		Operation[mode::Standby] = new StandbyMode(this);
 		Operation[mode::AutoDrive] = new AutoDriveMode(this);
 		Operation[mode::TakePhoto] = new TakePhotoMode(this);
-
-		/*
-
 		Operation[mode::ImageProcess] = new ImageProcessMode(this);
-		*/
 	}
 	catch (exception& e) { 
 		cout << e.what() << endl;
@@ -103,22 +99,7 @@ void MainMachine::StartMainLoop() {
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
 	sleep(1000);
-	Operation[mode::TakePhoto]->init();
-	/*
-	logger->DebugMsg("On!!");
-	cameraOn();
-	sleep(7000);
-	cameraOff();
-	logger->DebugMsg("Off!!");
-	sleep(7000);
-
-	logger->DebugMsg("On!!");
-	cameraOn();
-	sleep(7000);
-	cameraOff();
-	logger->DebugMsg("Off!!");
-	sleep(7000);
-	*/
+	Operation[mode::TakePhoto]->test();
 
 	logger->DebugMsg("===test end===");
 }
@@ -144,6 +125,11 @@ double MainMachine::getDestY() const { return destinations[destIdx].y; }
 double MainMachine::getDestYaw() const { return destinations[destIdx].yaw; }
 bool MainMachine::isDestBookshelf() const { return destinations[destIdx].bookshelfID >= 0; }
 int MainMachine::getBookshelfID() const {return destinations[destIdx].bookshelfID; }
+
+
+void MainMachine::setBookshelfImg(const cv::Mat& img){	bookshelfImg = img; } // [WARN] shallow copy
+cv::Mat MainMachine::getBookshelfImg(){ return bookshelfImg; } // [WARN] shallow copy
+
 	
 
 void MainMachine::cameraOn() const {

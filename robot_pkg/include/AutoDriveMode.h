@@ -1,6 +1,6 @@
 #pragma once
-#ifndef AUTODRIVEMODE_H
-#define AUTODRIVEMODE_H
+#ifndef AUTO_DRIVEMODE_H
+#define AUTO_DRIVEMODE_H
 
 #include "Mode.h"
 #include <vector>
@@ -13,7 +13,9 @@ public:
 	explicit AutoDriveMode(MainMachine* const);
 	~AutoDriveMode() override;
 	mode run() override;
-	virtual void init() override;  
+	void init() override;
+	void test() override;  
+  
 	void setRoute(const std::vector<std::pair<double, double>>& route);
 
 private:  
