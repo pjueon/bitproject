@@ -34,7 +34,7 @@ class Server(QThread):
                 rospy.wait_for_service('write_state')
                 try:
                     req = rospy.ServiceProxy('write_state', WriteState)
-                    msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/'+ +'.bag.pbstream'
+                    msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream'
                     res = req()
                     print(res.status)
                 except:
