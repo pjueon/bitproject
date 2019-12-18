@@ -18,8 +18,8 @@ class Worker(QThread):
         self.tfnet = tfnet
         self.bridge = CvBridge()
         self.predic_flag = 0
-        self.resize_width = 870
-        self.resize_height = 630
+        self.resize_width = 890
+        self.resize_height = 470
         self.cappub = rospy.Publisher('/boxinfo_topic', YOLOBoxInfo, queue_size = 1)
 
     def __del__(self):
@@ -43,7 +43,7 @@ class Worker(QThread):
             if(self.predic_flag == 0):
                 self.results = self.tfnet.return_predict(self.cv_image)
                 self.cv_image = self.boxing(self.cv_image, self.results)
-                print('FPS {:.1f}'.format(1 / (time.time() - self.stime)))
+                #print('FPS {:.1f}'.format(1 / (time.time() - self.stime)))
                 self.predic_flag = 0
             else:
                 self.predic_flag = 1
@@ -86,17 +86,16 @@ class Worker(QThread):
             self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
 
         if self.bound_flag:
-            self.sendData = YOLOBoxInfo()
 
+            self.sendData = YOLOBoxInfo()
             self.sendData.tl_x = round(self.top_x / self.resize_width, 5)
             self.sendData.tl_y = round(self.top_y / self.resize_height, 5)
             self.sendData.br_x = round(self.btm_x / self.resize_width, 5)
             self.sendData.br_y = round(self.btm_y / self.resize_height, 5)
             self.sendData.confidence = round(self.confidence.item(), 5)
 
-
             self.cappub.publish(self.sendData)
-            print("box_info_publishing~~!!")
+            #print("box_info_publishing~~!!")
 
 
         return self.newImage

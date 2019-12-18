@@ -20,18 +20,23 @@ from py_pkg import Create_Map
 from py_pkg import camera_thread
 from py_pkg import map_reader_thread
 from py_pkg import srv_thread
+from py_pkg import load_thread
 
 def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
 
 class MainWindow(QMainWindow):
-    camera_flag = 0
+#////////////////////////// MainWindow Init Start //////////////////////////////
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.ui.Form.installEventFilter(self)
         self.ui.statusbar.showMessage('Ready')
+        self.camera_flag = 0
+        self.loading_flag = True
+        self.map_load_flag = False
+        self.map_create_flage = False
 
 #========================== Auto Control Button init ===========================
         self.ui.Auto_Fineder_Start_BTN.clicked.connect(self.auto_Start)
@@ -54,29 +59,39 @@ class MainWindow(QMainWindow):
         self.th_map.send_map_view.connect(self.map_View_Update)
 
         self.th_srv = srv_thread.Server(parent = self)
-        self.th_srv.send_server.connect(self.srv_Server)
+        self.th_srv.send_server_data.connect(self.srv_Server)
+
+        self.th_load = load_thread.Loader(parent = self)
 
 #========================== Publisher init =====================================
-        self.camera_pub = rospy.Publisher("/camera_toggle", Bool, queue_size = 1)
-        self.node_pub = rospy.Publisher("/node_pub", String, queue_size = 1)
-        self.launch_select_pub = rospy.Publisher("/launch_select", String, queue_size = 1)
-        #self.th_srv.start()
+        self.camera_pub = rospy.Publisher("/camera_toggle",
+                                          Bool,
+                                          queue_size = 1)
 
+        self.launch_select_pub = rospy.Publisher("/launch_select",
+                                          String,
+                                          queue_size = 1)
+
+#========================== Etc Class init =====================================
         self.CM = Create_Map.create_map()
 
+#========================== Show Mainwindow ====================================
         self.show()
+
+#////////////////////////// MainWindow Init End ////////////////////////////////
+
 
 #========================== Auto Control Slot Def ==============================
     @Slot()
     def auto_Start(self):
         try:
-            self.node_pub.publish("auto_Start")
+            self.launch_select_pub.publish("auto_Start")
         except:
             pass
     @Slot()
     def auto_Stop(self):
         try:
-            self.node_pub.publish("auto_Stop")
+            self.launch_select_pub.publish("auto_Stop")
         except:
             pass
 
@@ -106,39 +121,57 @@ class MainWindow(QMainWindow):
 #========================== Map Control Slot Def ===============================
     @Slot()
     def read_Map(self):
-        self.launch_select_pub.publish("load_map_mode")
-        self.th_map.start()
+        if(self.map_load_flag == False):
+            self.map_load_flag = True
+            self.th_load.loading_flag = True
+
+            self.th_load.loading.connect(self.loading_map)
+            self.th_map.send_map_view.connect(self.map_View_Update)
+            self.launch_select_pub.publish("load_map_mode")
+
+            self.th_load.start()
+            self.th_map.start()
 
     @Slot()
     def delete_Map(self):
+        if(self.map_load_flag == True):
+            self.map_load_flag = False
+            self.th_load.loading_flag = False
 
-        self.launch_select_pub.publish("load_map_mode_close")
-        self.th_map.quit()
-        self.ui.Map_View.setScene(self.view_Clear())
-        self.ui.Map_View.show()
+            self.th_map.send_map_view.disconnect()
+            self.launch_select_pub.publish("load_map_mode_close")
+
+            self.th_map.stop()
+            self.th_map.quit()
+            self.ui.Map_View.setScene(self.view_Clear())
+            self.ui.Map_View.show()
 
     @Slot()
     def create_Map(self):
-
-        self.th_map.start()
-        self.launch_select_pub.publish("create_map_mode")
-        self.ui.Map_View.installEventFilter(self)
-        self.ui.Map_View.setFocus()
+        if(self.map_create_flage == False):
+            self.map_create_flage = True
+            self.th_load.loading.connect(self.loading_map)
+            self.th_load.loading_flag = True
+            self.launch_select_pub.publish("create_map_mode")
+            self.ui.Map_View.installEventFilter(self)
+            self.ui.Map_View.setFocus()
+            self.th_load.start()
+            self.th_map.start()
 
     @Slot()
     def save_Map(self):
 
         self.th_srv.start()
-        self.launch_select_pub.publish("create_map_mode_save")
 
-#========================== Thread Data Req, Res Slot Def ===============================
+#========================== Thread Data Req, Res Slot Def ======================
     @Slot(object)
     def map_View_Update(self, msg):
+        if (self.th_load.loading_flag == True):
+
+            self.th_load.loading_flag = False
+            self.th_load.loading.disconnect()
         try:
-            pixmap = QPixmap.fromImage(msg)
-            item = QGraphicsPixmapItem(pixmap)
-            scene = QGraphicsScene()
-            scene.addItem(item)
+            scene = self.image2Qpixmap(msg)
             self.ui.Map_View.setScene(scene)
             self.ui.Map_View.show()
         except:
@@ -147,28 +180,34 @@ class MainWindow(QMainWindow):
     @Slot(object)
     def camera_View_Update(self, msg):
         try:
-            pixmap = QPixmap.fromImage(msg)
-            item = QGraphicsPixmapItem(pixmap)
-            scene = QGraphicsScene()
-            scene.addItem(item)
+            scene = self.image2Qpixmap(msg)
             self.ui.Camera_View.setScene(scene)
             self.ui.Camera_View.show()
         except:
             pass
 
     @Slot(object)
-    def srv_Server(self, msg):
+    def srv_Server(self):
         try:
-            pass
+            self.launch_select_pub.publish("create_map_mode_save")
         except:
             pass
 
+    @Slot(object)
+    def loading_map(self, msg):
+        try:
+            scene = self.image2Qpixmap(msg)
+            self.ui.Map_View.setScene(scene)
+            self.ui.Map_View.show()
+        except:
+            pass
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Close:
             print ("================ User has clicked the red x on the main window =================\n\n\n")
 
             del self.CM
+            #self.launch_select_pub.publish("load_map_mode_close")
             '''
             if self.th_camera.isRunning():
                 self.th_camera.stop()
@@ -184,7 +223,6 @@ class MainWindow(QMainWindow):
             return True
         elif obj == self.ui.Map_View:
             if event.type() == QEvent.KeyPress and not event.isAutoRepeat():
-                print(event.key())
                 self.CM.keyEvent(event)
                 return True
             elif event.type() == QEvent.KeyRelease and not event.isAutoRepeat():
@@ -198,15 +236,26 @@ class MainWindow(QMainWindow):
 
 #    def closeEvent(self, event): # Click the Window X Button, Calling this Event
 
-#========================== Etc Function ===============================
+#========================== Etc Function =======================================
 
     def view_Clear(self):
-        clear = QPixmap(1, 1)
-        clear.fill(QColor("white"))
-        clear = QGraphicsPixmapItem(clear)
+        try:
+            clear = QPixmap(1, 1)
+            clear.fill(QColor("white"))
+            clear = QGraphicsPixmapItem(clear)
+            scene = QGraphicsScene()
+            scene.addItem(clear)
+            return scene
+        except:
+            pass
+
+    def image2Qpixmap(self, data):
+        pixmap = QPixmap.fromImage(data)
+        item = QGraphicsPixmapItem(pixmap)
         scene = QGraphicsScene()
-        scene.addItem(clear)
+        scene.addItem(item)
         return scene
+
 if __name__ == '__main__':
 
     options = {"pbLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_2class_yolo2.pb"),
@@ -215,7 +264,7 @@ if __name__ == '__main__':
                }
 
     tfnet = TFNet(options)
-    rospy.init_node('main_program')
+    rospy.init_node('dd')
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec_())
