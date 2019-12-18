@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BOOKSEGMENTATION_H
-#define BOOKSEGMENTATION_H
+#ifndef BOOK_PREPROCESSOR_H
+#define BOOK_PREPROCESSOR_H
 
 #include "opencv2/opencv.hpp"
 #include <vector>
@@ -17,7 +17,7 @@ public:
 	void run();
 	void showResult();
 	void saveResult(const std::string& filenamePrefix);
-
+	std::vector<cv::Mat> getBookImgs(const std::vector<cv::Vec<cv::Point, 4>>& bookAreas);
 
 private:
 	cv::Mat srcImg;
