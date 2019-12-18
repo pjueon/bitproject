@@ -89,7 +89,6 @@ class launch_manager():
                 self.flag = True
                 self.create_map_mode()
 
-
 if __name__ == "__main__":
     rospy.init_node("launch_manager", anonymous=True)
     print("Start Process")

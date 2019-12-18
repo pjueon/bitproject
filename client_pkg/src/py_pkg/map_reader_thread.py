@@ -61,8 +61,8 @@ class Mapper(QThread):
         map = cv2.cvtColor(map, cv2.COLOR_BGR2RGB)
         bytesPerLine = 3 * ros_Width
         qt_image = QImage(map, ros_Width, ros_Height, bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(qt_image)
-        self.send_map_view.emit(pixmap)
+
+        self.send_map_view.emit(qt_image)
 
     def updatePosition(self):
         while not rospy.is_shutdown():
