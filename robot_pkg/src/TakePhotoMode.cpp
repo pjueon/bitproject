@@ -67,7 +67,7 @@ mode TakePhotoMode::run() {
     
 	sleep(1000);
 
-	double correctYaw = angleTune(1.2, 0.7);
+	double correctYaw = angleTune(0.7, 0.7);
 	logger->DebugMsg("correctYaw : ", correctYaw);    
 	rotateTo(correctYaw);
 
@@ -76,28 +76,28 @@ mode TakePhotoMode::run() {
 
 	sleep(2000);
 
-	auto [new_x, new_y] = positionTune();
+	auto [bookshelf_x, bookshelf_y] = getBookshelfPos();
+	constexpr double R = 0.95;
+	auto [new_x, new_y] = std::pair<double, double>{ bookshelf_x + R * cos(PI + correctYaw), bookshelf_y + R * sin(PI + correctYaw) };
+
 	logger->DebugMsg("new position : ", new_x, ", ", new_y, ", current position: ", mainMachine->getX(), ", ", mainMachine->getY());
 	moveBackTo(new_x, new_y);
 
+
+	sleep(2000);
 	mainMachine->updatePosition();
 	logger->DebugMsg("After positionTune, current x, y: ", mainMachine->getX(), ", ", mainMachine->getY());
 
-	rotateTo(correctYaw);
-
-	correctYaw = angleTune(2.0, 0.5);
+	rotateTo(atan2(bookshelf_y - mainMachine->getY(), bookshelf_x - mainMachine->getX()));
 	mainMachine->updatePosition();
-	logger->DebugMsg("new correctYaw : ", correctYaw);  
-
-	sleep(2000);
-	rotateTo(correctYaw);
-
+	logger->DebugMsg("TEST, current yaw : ", mainMachine->getYaw());
+	
 	mainMachine->updatePosition();
 	logger->DebugMsg("final yaw : ", mainMachine->getYaw());
 
-
-	mainMachine->stop();	
-	sleep(5000);
+	mainMachine->stop();
+	logger->DebugMsg("please wait...");	
+	sleep(7000);
 
 	auto boxinfo = getYOLOBoxInfo();
 	auto frame = getPhoto();
@@ -112,13 +112,8 @@ mode TakePhotoMode::run() {
 
 	mainMachine->setBookshelfImg(frame(box));
 	logger->DebugMsg("\n\n============\nTook a Photo!!!!!!\n============\n");
-
-/*	
-	bool doesNextExist = mainMachine->nextDestination();
-	if(!doesNextExist) return mode::Quit;
-*/	
+	
 	return mode::ImageProcess;
-	//return mode::AutoDrive;
 }
 //======================================================================
 
@@ -242,6 +237,13 @@ double TakePhotoMode::angleTune(double frontRagne, double sideRange) {
 	Mat frontSide = getFrontLaserScan(frontRagne, sideRange);
 
 	morphologyEx(frontSide, frontSide, MORPH_CLOSE, Mat());
+	
+	//==for debug==
+	const string path = "/home/jetbot/catkin_ws/src/bitproject/";
+	string filename = "angleTune_"+ to_string(frontRagne)+ "_" + to_string(sideRange) + "_" + to_string(mainMachine->getBookshelfID());
+	filename += ".jpg";
+	imwrite(path + filename, frontSide);
+	//=========
 
 
 	vector<Vec4i> lines;
@@ -265,14 +267,14 @@ double TakePhotoMode::angleTune(double frontRagne, double sideRange) {
 
 
 //----------------
-std::pair<double, double> TakePhotoMode::positionTune(){
-	logger->DebugMsg("\n\n============\npositionTune() start!");	
+std::pair<double, double> TakePhotoMode::getBookshelfPos(){
+	logger->DebugMsg("\n\n============\ngetBookshelfPos() start!");	
 
 
 	auto mapMsg = ros::topic::waitForMessage<nav_msgs::OccupancyGrid>("/map", ros::Duration(5.0));
 		
 	//fail to load	
-	if(mapMsg == nullptr) throw runtime_error("Failed to load map data! from TakePhotoMode::positionTune()");
+	if(mapMsg == nullptr) throw runtime_error("Failed to load map data! from TakePhotoMode::getBookshelfPos()");
 	
 	logger->DebugMsg("Map Data loaded");
 	
@@ -290,8 +292,8 @@ std::pair<double, double> TakePhotoMode::positionTune(){
 	double current_y = mainMachine->getY();
 	double current_yaw = mainMachine->getYaw();
 
-	constexpr double x_range = 0.7;
-	constexpr double y_range = 0.7;
+	constexpr double x_range = 0.85;
+	constexpr double y_range = 0.85;
 
 	//need to be fixed later	
 	vector<Point> points;
@@ -317,8 +319,9 @@ std::pair<double, double> TakePhotoMode::positionTune(){
 	
 	fillPoly(mask, pts, npts, 1, Scalar(255));
 
-	//morphologyEX close
+	//morphology
 	morphologyEx(map, map, MORPH_CLOSE, Mat());
+	dilate(map, map, Mat());
 
 
 	Mat maskedMap = mask & map;
@@ -326,23 +329,41 @@ std::pair<double, double> TakePhotoMode::positionTune(){
 
 	int cnt = connectedComponentsWithStats(maskedMap, labels, stats, centroids);
 
-	if(cnt <= 1) return { current_x, current_y };
-	
+	if(cnt <= 1) {
+		logger->DebugMsg("[WARN]No bookshelf detected!!");
+		return { current_x, current_y };
+	}
+
 	auto max_p = stats.ptr<int>(1);
 
 	for(int i = 1; i < cnt; i++){
 		auto current_p = stats.ptr<int>(i);
 		if(current_p[4] > max_p[4]) max_p = current_p;
 	}
+	
+	auto pick_white_pixel = [maskedMap](int start_x, int start_y, int width, int height)->std::pair<int, int>
+						 {
+						 	for(int y = start_y; y < start_y+height; y++){
+								auto row_p = maskedMap.ptr<uchar>(y);
+								for(int x = start_x; x <start_x + width; x++){
+									if(row_p[x] != 0) return {x, y};
+								}
+							}
+							return {start_x+width/2, start_y+height/2};
+						  };
 
-	auto [bookshelf_x, bookshelf_y] = XYConverter->toRealXY(max_p[0]+max_p[2]/2, max_p[1]+max_p[3]/2);
+	auto [x, y] = pick_white_pixel(max_p[0], max_p[1], max_p[2], max_p[3]);
+	connectedComponentsWithStats(map, labels, stats, centroids);
+	auto label = labels.at<int>(y, x);
+	auto bookshelf_p = stats.ptr<int>(label);
+
+	auto [bookshelf_x, bookshelf_y] = XYConverter->toRealXY(bookshelf_p[0]+bookshelf_p[2]/2, bookshelf_p[1]+bookshelf_p[3]/2);
 	logger->DebugMsg("Bookshelf position : ", bookshelf_x, ", ", bookshelf_y, ", current position: ", current_x, ", ", current_y);
 	logger->DebugMsg("Distance to Bookshelf : ", Distance(bookshelf_x, bookshelf_y, current_x, current_y));
 	
-	logger->DebugMsg("positionTune() end!\n============\n");
+	logger->DebugMsg("getBookshelfPos() end!\n============\n");
 
-	constexpr double R = 0.9;	
-	return { bookshelf_x + R * cos(PI + current_yaw), bookshelf_y + R * sin(PI + current_yaw) };
+	return {bookshelf_x, bookshelf_y};
 }
 
 
@@ -440,7 +461,7 @@ std::array<double, 4> TakePhotoMode::getYOLOBoxInfo(){
 	vector<msgType> msgs;
 	
 	for(int i = 0; i < 5; i++){
-		auto msg = ros::topic::waitForMessage<bit_custom_msgs::YOLOBoxInfo>("/boxinfo_topic", ros::Duration(5.0));
+		auto msg = ros::topic::waitForMessage<bit_custom_msgs::YOLOBoxInfo>("/boxinfo_topic", ros::Duration(1.0));
 		if(msg != nullptr) msgs.push_back(msg);
 	}
 
