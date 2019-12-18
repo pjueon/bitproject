@@ -28,15 +28,11 @@ private:
 	int width;
 	int height;
 
-
 	// 짧은 엣지들 삭제
 	void removeShortEdges(const int threshold);
 
 	// 직선의 기울기 반환
 	double getSlope(const cv::Vec4i& line);
-
-	// 각도(radian)을 -PI ~ PI 사이로 변환
-	double fitAngleInRange(double angle);
 
 	// 두 직선이 평행한지 확인
 	bool isParallel(const cv::Vec4i& line1, const cv::Vec4i& line2);

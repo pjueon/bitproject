@@ -8,10 +8,10 @@
 #include <algorithm>
 
 #include "BookPreProcessor.h"
+#include "UtilityFunctions.h"
 
 using namespace cv;
 using namespace std;
-
 
 BookImgPreProcessor::BookImgPreProcessor()
 	: width(0), height(0)
@@ -87,15 +87,6 @@ void BookImgPreProcessor::removeShortEdges(const int threshold) {
 	_output.copyTo(trimmedEdgeImg);
 }
 
-// 각도(radian)을 -PI ~ PI 사이로 변환
-double BookImgPreProcessor::fitAngleInRange(double angle) {
-	if (-CV_PI < angle && angle <= CV_PI) {
-		return angle;
-	}
-
-	auto n = floor(CV_PI - angle/(2 * CV_PI));
-	return 2 * CV_PI * n + angle;
-}
 
 // 직선의 기울기 반환
 double BookImgPreProcessor::getSlope(const Vec4i& line) {
