@@ -1,0 +1,68 @@
+﻿1조. 객체 인식 및 SLAM을 이용한 다기능 로봇
+
+- 개요
+ 본 프로젝트는 자율 주행을 위한 필수 요소인 위치 정보와 지도 데이터를 Google Cartographer를 활용해 제작하고 
+IB(Intellectual Boustrophedon) 동작 및 A* 알고리즘을 활용해 완전 경로 계획법(Coverage Path Planning)을 구현하였습니다.
+또한, 딥러닝 알고리즘 중 실시간으로 위치 추정 및 분류가 가능한 Yolov3를 채택하여 여러 객체 인식 활용 방법 중
+방범, 화재 감지 및 애완동물 tracking 기능을 구현하였고, 사용자의 시각적인 접근 및 제어를 용이하게 하기 위해 웹을
+구현하였습니다.
+
+
+- 설계의 주안점
+ 불, 사람, 강아지 학습을 통한 방범, 화재 감지 및 애완동굴 tracking 구현
+ Google Cartographer를 활용한 SLAM 기술 구현
+ 웹 서버를 통한 실시간 상황 제공
+
+
+- 응용 분야
+지도 데이터 제작 및 그 데이터를 통한 경로계획이 필요한 곳
+로봇 청소기, 모션감지 공기청정기, 감시 시스템
+자율주행 자동차
+
+
+- 사용 기술
+ 개발 환경: Windows10, Ubuntu 18.04
+ 개발 언어: C, C++, Python, Javascript
+ 개발 도구: ROS, OpenCV, Darknet, Cartographer, Yolo v3, COCO dataset
+
+ 사용 장비 : jetson nano, jetson TX2, GPU-RTX 2070
+
+
+
+
+
+
+
+
+2조. 자율주행 & 머신러닝을 통한 책 분류 로봇  
+
+- 개요
+ 대규모 서점 및 도서관에서 책을 정리하는 일은 많은 인적자원과 시간을 소비하는 작업입니다. 
+ 본 프로젝트는 머신러닝 및 자율 주행 기술을 활용하여 이러한 작업을 도와줄 수 있는 로봇을 개발하면 어떨까 하는 아이디어에서 출발했습니다.
+
+ 2D Lidar 및 IMU 센서 데이터를 활용하여 Cartographer로 map을 제작 후 현재 위치를 파악하며 지정된 책장 까지 최단경로를 계산합니다. 
+ 지정된 책장 위치로 자율 주행을 한 후에 책장을 인식하여 촬영을 시작합니다.
+ 촬영 후 Vocabulary Tree 기반 이미지 비교 알고리즘을 통해 잘못 꽂힌 책이 있는지 검사합니다.
+
+ 본 프로젝트는 많은 인적 자원, 시간 등을 절약할 수 있으며 책장이나 선반에 책을 인식해서 비교하는 것과 같이 비슷한 작업에서
+연동시켜 응용해 사용이 가능합니다.
+   
+
+
+- 설계의 주안점
+ 1. 카메라 통하여 읽은 데이터와 기존 저장 데이터가 일치하는지 판단
+ 2. 책장의 책을 개별로 인식하게 프로그램 작성
+ 3. Lidar를 이용해 map을 작성 및 저장을 하고 최단 경로 계산 후 자율 주행
+
+- 응용 분야
+ 규모가 커서 사람이 목록을 일일이 확인하기 힘든 곳
+ 매일 매일 물건의 위치가 변화 하는 곳(서점, 도서관 등 관련 분야)
+
+- 사용 기술
+ 개발 환경: Windows10, Ubuntu 18.04
+ 개발 언어: C++, Python
+ 사용 library / framwork : ROS(mellodic), OpenCV, Tensorflow 1.14(darkflow), Cartographer, YOLO v2, Qt(pyside2)
+ 개발 도구 : Atom, Visual Studio 2019, QtCreator
+ 사용 장비 : NVIDIA Jetson Nano, NVIDIA Jetson TX2, NVIDIA GPU-RTX 2070
+
+
