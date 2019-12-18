@@ -41,7 +41,7 @@ mode ImageProcessMode::run() {
 	string filename = "bookshelf" + to_string(mainMachine->getBookshelfID());
 	filename += ".jpg";
 
-	string path = "/home/jetbot/catkin_ws/src/bitproject/";
+	const string path = "/home/jetbot/catkin_ws/src/bitproject/";
 	logger->DebugMsg("file name: ", filename);
 	logger->DebugMsg("Path: ", path);
 

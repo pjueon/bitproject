@@ -34,12 +34,18 @@ class Server(QThread):
                 rospy.wait_for_service('write_state')
                 try:
                     req = rospy.ServiceProxy('write_state', WriteState)
+<<<<<<< HEAD
                     #msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream'
                     res = req('../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream')
                     #print(res.status)
                     if(res.status.code == 0):
                         self.parent.ui.statusbar.showMessage("Map Save Success!")
                         self.send_server_data.emit()
+=======
+                    msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream'
+                    res = req(msg)
+                    print(res.status)
+>>>>>>> 07defbffcb7ad3b561b62373fdc1e656158aaa11
                 except:
                     pass
         except rospy.ServiceException as e:
