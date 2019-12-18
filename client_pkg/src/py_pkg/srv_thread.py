@@ -15,7 +15,7 @@ def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
 
 class Server(QThread):
-    send_server = Signal()
+    send_server_data = Signal()
     def __init__(self, parent=None):
         super(Server, self).__init__()
         self.parent = parent
@@ -28,19 +28,26 @@ class Server(QThread):
         try:
             req = rospy.ServiceProxy('finish_trajectory', FinishTrajectory)
             res = req(0)
-            print(res.status)
-            if(res.status.code == 0):
-                print("map saving")
+            #print(res.status)
+            self.parent.ui.statusbar.showMessage(res.status.message)
+            if(res.status.code == 0 or res.status.code == 8):
                 rospy.wait_for_service('write_state')
                 try:
                     req = rospy.ServiceProxy('write_state', WriteState)
+<<<<<<< HEAD
+                    #msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream'
+                    res = req('../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream')
+                    #print(res.status)
+                    if(res.status.code == 0):
+                        self.parent.ui.statusbar.showMessage("Map Save Success!")
+                        self.send_server_data.emit()
+=======
                     msg = '../catkin_ws/src/bitproject/mapper_pkg/map_data/map.bag.pbstream'
                     res = req(msg)
                     print(res.status)
+>>>>>>> 07defbffcb7ad3b561b62373fdc1e656158aaa11
                 except:
                     pass
-
-            self.parent.ui.statusbar.showMessage(res.status.message)
         except rospy.ServiceException as e:
             print ("Service call failed: %s"%(e))
 

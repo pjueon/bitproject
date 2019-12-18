@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BOOKSEGMENTATION_H
-#define BOOKSEGMENTATION_H
+#ifndef BOOK_PREPROCESSOR_H
+#define BOOK_PREPROCESSOR_H
 
 #include "opencv2/opencv.hpp"
 #include <vector>
@@ -17,7 +17,7 @@ public:
 	void run();
 	void showResult();
 	void saveResult(const std::string& filenamePrefix);
-
+	std::vector<cv::Mat> getBookImgs(const std::vector<cv::Vec<cv::Point, 4>>& bookAreas);
 
 private:
 	cv::Mat srcImg;
@@ -28,15 +28,11 @@ private:
 	int width;
 	int height;
 
-
 	// 짧은 엣지들 삭제
 	void removeShortEdges(const int threshold);
 
 	// 직선의 기울기 반환
 	double getSlope(const cv::Vec4i& line);
-
-	// 각도(radian)을 -PI ~ PI 사이로 변환
-	double fitAngleInRange(double angle);
 
 	// 두 직선이 평행한지 확인
 	bool isParallel(const cv::Vec4i& line1, const cv::Vec4i& line2);

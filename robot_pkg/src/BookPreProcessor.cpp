@@ -7,11 +7,11 @@
 #include <cmath>
 #include <algorithm>
 
-#include "BookSegmentation.h"
+#include "BookPreProcessor.h"
+#include "UtilityFunctions.h"
 
 using namespace cv;
 using namespace std;
-
 
 BookImgPreProcessor::BookImgPreProcessor()
 	: width(0), height(0)
@@ -19,20 +19,18 @@ BookImgPreProcessor::BookImgPreProcessor()
 
 
 void BookImgPreProcessor::setImg(const cv::Mat& img) {
-	srcImg = img;
-	width = srcImg.cols;
-	height = srcImg.rows;
+	width = 800;
+	const double factor = double(width) / img.cols;
+
+	height = static_cast<int>(img.rows * factor);
+
+	resize(img, srcImg, Size(width, height));
+
 }
 
 void BookImgPreProcessor::setImg(const std::string& filename) {
-	// 이미지 파일 로드
-    // 이미지크기 가로 1000px에 파라미터들을 맞춰놨다.
-    srcImg = imread(filename, IMREAD_ANYCOLOR);
-	if (srcImg.empty()) {
-		throw runtime_error("Image load failed");
-	}
-	width = srcImg.cols;
-	height = srcImg.rows;
+	setImg(imread(filename, IMREAD_ANYCOLOR));
+	if (srcImg.empty()) throw runtime_error("Image load failed");
 }
 
 void BookImgPreProcessor::showResult() {
@@ -89,15 +87,6 @@ void BookImgPreProcessor::removeShortEdges(const int threshold) {
 	_output.copyTo(trimmedEdgeImg);
 }
 
-// 각도(radian)을 -PI ~ PI 사이로 변환
-double BookImgPreProcessor::fitAngleInRange(double angle) {
-	if (-CV_PI < angle && angle <= CV_PI) {
-		return angle;
-	}
-
-	auto n = floor(CV_PI - angle/(2 * CV_PI));
-	return 2 * CV_PI * n + angle;
-}
 
 // 직선의 기울기 반환
 double BookImgPreProcessor::getSlope(const Vec4i& line) {
@@ -236,9 +225,21 @@ void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vecto
 
 // 책 한권 한권의 이미지를 저장하기
 void BookImgPreProcessor::saveBookCovers(const vector<Vec<Point, 4>>& bookAreas) {
+	auto imgs = getBookImgs(bookAreas);
 	string prefix = "test_";
-	const int n = int(bookAreas.size());
-	for (int i = 0; i < n; i++) {
+
+	for (int i = 0; i < bookAreas.size(); i++) {
+
+		stringstream ss;
+		ss << prefix << setw(3) << setfill('0') << i << ".jpg";
+		imwrite(ss.str(), imgs[i]);
+	}
+}
+
+std::vector<cv::Mat> BookImgPreProcessor::getBookImgs(const vector<Vec<Point, 4>>& bookAreas) {
+	vector<Mat> ret(bookAreas.size());
+
+	for (int i = 0; i < bookAreas.size(); i++) {
 		const Vec<Point, 4>& points = bookAreas[i];
 
 		int h = int(max(Distance(points[0], points[3]), Distance(points[1], points[2])));
@@ -258,17 +259,11 @@ void BookImgPreProcessor::saveBookCovers(const vector<Vec<Point, 4>>& bookAreas)
 
 		Mat transformMat = getPerspectiveTransform(srcPoints, dstPoints);
 
-		Mat dst;
-		warpPerspective(srcImg, dst, transformMat, Size(w, h));
-
-		stringstream ss;
-		ss << prefix << setw(3) << setfill('0') << i << ".jpg";
-		imwrite(ss.str(), dst);
-
+		warpPerspective(srcImg, ret[i], transformMat, Size(w, h));
 	}
+
+	return ret;
 }
-
-
 
 
 // 직선들 중 세로선 추출

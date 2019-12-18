@@ -53,7 +53,8 @@ from std_msgs.msg import Bool, String
 
 class launch_manager():
     def __init__(self):
-        self.flag = False
+        self.mode_flag = False
+        self.auto_flag = False
         rospy.Subscriber("/launch_select", String, self.launch_callback)
         rospy.spin()
 
@@ -67,29 +68,42 @@ class launch_manager():
         #print ("The PID of child:", self.child.pid)
 
     def create_map_mode(self):
-        self.child = subprocess.Popen(["roslaunch","mapper_pkg","create_map_mode.launch"])
+        self.child = subprocess.Popen(["roslaunch", "mapper_pkg", "create_map_mode.launch"])
+
+    def auto_node(self):
+        self.node_child = subprocess.Popen(["rosrun", "robot_pkg", "robot_node"])
 
 
     def launch_callback(self, data):
-        if self.flag == True :
-            if data.data == "load_map_mode_close":
+        if (self.mode_flag == True) :
+            if (self.auto_flag = True and data.data == "auto_Start"):
+                self.auto_node()
 
+            elif (self.auto_flag = True and data.data == "auto_Stop"):
+                self.node_child.send_signal(signal.SIGINT)
+                self.auto_flag = False
+                
+            elif (data.data == "load_map_mode_close"):
                 self.child.send_signal(signal.SIGINT)
-                self.flag = False
-            elif data.data == "create_map_mode_save":
-                pass
+                self.mode_flag = False
+
+            elif (data.data == "create_map_mode_save"):
+                self.child.send_signal(signal.SIGINT)
+                self.mode_flag = False
 
         else:
 
-            if data.data == "load_map_mode" :
-                self.flag = True
+            if (data.data == "load_map_mode"):
+                self.mode_flag = True
+                self.auto_flag = True
                 self.load_map_mode()
 
-            elif data.data == "create_map_mode" :
-                self.flag = True
+            elif (data.data == "create_map_mode"):
+                self.mode_flag = True
+                self.auto_flag = True
                 self.create_map_mode()
 
-if __name__ == "__main__":
+if (__name__ == "__main__"):
     rospy.init_node("launch_manager", anonymous=True)
     print("Start Process")
     launch_manager()

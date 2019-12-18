@@ -38,7 +38,10 @@ class Mapper(QThread):
                                                           0.5)
 
     def run(self):
-        rospy.Subscriber("/map", OccupancyGrid, self.mapCallback)
+        self.state = rospy.Subscriber("/map", OccupancyGrid, self.mapCallback)
+
+    def stop(self):
+        self.state.unregister()
 
     def __del__(self):
         print("============================= End Map Reader Thread ============================")
@@ -97,7 +100,7 @@ class Mapper(QThread):
         return drawmap
 
     def mapResize(self, map):
-        LongerSide = 950.
+        LongerSide = 930.
         self.resizingFactor = LongerSide / map.shape[0] if map.shape[0] > map.shape[1] else LongerSide / map.shape[1]
         self.resizingFactor = self.resizingFactor
         width = int(self.resizingFactor * map.shape[1])
