@@ -14,23 +14,23 @@ class Worker(QThread):
     def __init__(self, parent = None, tfnet = None):
         super(Worker, self).__init__()
         #self.main = parent
+        self.sub = None
         self.tfnet = tfnet
         self.bridge = CvBridge()
         self.predic_flag = 0
         self.resize_width = 870
         self.resize_height = 630
-        self.cappub = rospy.Publisher('/boxinfo_topic', YOLOBoxInfo, queue_size = 20)
-
-        rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
-
+        self.cappub = rospy.Publisher('/boxinfo_topic', YOLOBoxInfo, queue_size = 1)
 
     def __del__(self):
-        del self.bridge
-        del self.tfnet
         print("============================= End Camera Thread ================================\n\n")
 
     def run(self):
-        rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
+        self.sub = rospy.Subscriber("/camera_topic", CompressedImage, self.callback)
+
+    def stop(self):
+        if not self.sub == None:
+            self.sub.unregister()
 
     def callback(self, data):
         try:
@@ -47,15 +47,13 @@ class Worker(QThread):
                 self.predic_flag = 0
             else:
                 self.predic_flag = 1
-
             self.height, self.width, self.channel = self.cv_image.shape
             self.cv_image = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2RGB)
 
             self.bytesPerLine = 3 * self.width
             self.qt_image = QImage(self.cv_image, self.width, self.height, self.bytesPerLine, QImage.Format_RGB888)
 
-            self.pixmap = QPixmap.fromImage(self.qt_image)
-            self.send_camera_view.emit(self.pixmap)
+            self.send_camera_view.emit(self.qt_image)
 
         except CvBridgeError as e:
             print("CvBridge err", e)
