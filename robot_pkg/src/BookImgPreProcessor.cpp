@@ -7,7 +7,7 @@
 #include <cmath>
 #include <algorithm>
 
-#include "BookPreProcessor.h"
+#include "BookImgPreProcessor.h"
 #include "UtilityFunctions.h"
 
 using namespace cv;
@@ -145,7 +145,7 @@ double BookImgPreProcessor::Distance(const Point& A, const Point& B) {
 
 
 // 책 영역을 초록색으로 색칠
-void BookImgPreProcessor::fillBookAreas(const Mat& inputImg, Mat& outputImg, const vector<Vec<Point, 4>>& bookAreas) {
+void BookImgPreProcessor::fillBookAreas(const Mat& inputImg, Mat& outputImg) {
 	Mat mask = Mat::zeros(inputImg.size(), CV_8UC3);
 	Scalar Green(0, 255, 0);
 	Point points[4];
@@ -173,7 +173,7 @@ int BookImgPreProcessor::GapBetweenVLines(const Vec4i& line1, const Vec4i& line2
 
 // 책이 있을 수 있는 영역 찾기
 // 반드시 정렬(x좌표 기준)된 수직선들을 사용할 것!!!
-void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vector<Vec<Point, 4>>& bookAreas, vector<Vec4i>& boarderLines, const int GapThreshold) {
+void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vector<Vec4i>& boarderLines, const int GapThreshold) {
 	size_t totalVLineNum = sortedVLines.size();
 	size_t lastBoarderIdx = totalVLineNum;
 	for (size_t i = 0; i < totalVLineNum - 1; i++) {
@@ -224,19 +224,19 @@ void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vecto
 
 
 // 책 한권 한권의 이미지를 저장하기
-void BookImgPreProcessor::saveBookCovers(const vector<Vec<Point, 4>>& bookAreas) {
-	auto imgs = getBookImgs(bookAreas);
-	string prefix = "test_";
+void BookImgPreProcessor::saveBookCovers(const string& filenamePrefix) {
+	auto imgs = getBookImgs();
+	string prefix = "book_";
 
 	for (int i = 0; i < bookAreas.size(); i++) {
 
 		stringstream ss;
-		ss << prefix << setw(3) << setfill('0') << i << ".jpg";
+		ss << filenamePrefix << "_" << prefix << setw(3) << setfill('0') << i << ".jpg";
 		imwrite(ss.str(), imgs[i]);
 	}
 }
 
-std::vector<cv::Mat> BookImgPreProcessor::getBookImgs(const vector<Vec<Point, 4>>& bookAreas) {
+std::vector<cv::Mat> BookImgPreProcessor::getBookImgs() {
 	vector<Mat> ret(bookAreas.size());
 
 	for (int i = 0; i < bookAreas.size(); i++) {
@@ -358,23 +358,23 @@ void BookImgPreProcessor::run() {
 
 	// 세로선들 사이의 갭이 일정 값 이하이면 무시
 	const int GapThreshold = cvRound(width / 50);
-	vector<Vec<Point, 4>> bookAreas;
+	//getBookImgsvector<Vec<Point, 4>> bookAreas;
 	vector<Vec4i> boarderLines;
 
-	findBookAreas(vLines, bookAreas, boarderLines, GapThreshold);
+	findBookAreas(vLines, boarderLines, GapThreshold);
 
 	// 책 표지 잘라내서 저장하기
-	saveBookCovers(bookAreas);
+	//saveBookCovers();
 
 	// 사진 위에 결과 그리기
 	resultImg = srcImg.clone();
 	Scalar Red(0, 0, 255);
 
-	fillBookAreas(resultImg, resultImg, bookAreas);
+	fillBookAreas(resultImg, resultImg);
 	drawLines(resultImg, resultImg, boarderLines, Red, 2);
 
 
-	waitKey();
-	destroyAllWindows();
+	//waitKey();
+	//destroyAllWindows();
 
 }

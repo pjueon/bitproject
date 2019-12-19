@@ -17,13 +17,16 @@ public:
 	void run();
 	void showResult();
 	void saveResult(const std::string& filenamePrefix);
-	std::vector<cv::Mat> getBookImgs(const std::vector<cv::Vec<cv::Point, 4>>& bookAreas);
+	std::vector<cv::Mat> getBookImgs();
+	void saveBookCovers(const std::string& filenamePrefix); // 책 한권 한권의 이미지를 저장하기
 
 private:
 	cv::Mat srcImg;
 	cv::Mat edgeImg;
 	cv::Mat trimmedEdgeImg;
 	cv::Mat resultImg;
+	std::vector<cv::Vec<cv::Point, 4>> bookAreas;
+
 
 	int width;
 	int height;
@@ -51,13 +54,12 @@ private:
 
 	// 책이 있을 수 있는 영역 찾기
 	// 반드시 정렬(x좌표 기준)된 수직선들을 사용할 것!!!
-	void findBookAreas(const std::vector<cv::Vec4i>& sortedVLines, std::vector<cv::Vec<cv::Point, 4>>& bookAreas, std::vector<cv::Vec4i>& boarderLines, const int GapThreshold);
+	void findBookAreas(const std::vector<cv::Vec4i>& sortedVLines, std::vector<cv::Vec4i>& boarderLines, const int GapThreshold);
 
-	// 책 한권 한권의 이미지를 저장하기
-	void saveBookCovers(const std::vector<cv::Vec<cv::Point, 4>>& bookAreas);
+
 
 	// 책 영역을 초록색으로 색칠
-	void fillBookAreas(const cv::Mat& inputImg, cv::Mat& outputImg, const std::vector<cv::Vec<cv::Point, 4>>& bookAreas);
+	void fillBookAreas(const cv::Mat& inputImg, cv::Mat& outputImg);
 
 	// 직선들 중 세로선 추출
 	void GetVLines(const std::vector<cv::Vec4i>& inputLines, std::vector<cv::Vec4i>& outputLines, const double verticalThreshold);
