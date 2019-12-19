@@ -76,10 +76,10 @@ class launch_manager():
 
     def launch_callback(self, data):
         if (self.mode_flag == True) :
-            if (self.auto_flag = True and data.data == "auto_Start"):
+            if (self.auto_flag == True and data.data == "auto_Start"):
                 self.auto_node()
 
-            elif (self.auto_flag = True and data.data == "auto_Stop"):
+            elif (self.auto_flag == True and data.data == "auto_Stop"):
                 self.node_child.send_signal(signal.SIGINT)
                 self.auto_flag = False
                 

@@ -4,4 +4,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-*.pbstream
+*bag.pbstream
+
+*.jpg
