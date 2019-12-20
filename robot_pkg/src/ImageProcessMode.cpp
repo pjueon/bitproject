@@ -64,6 +64,7 @@ mode ImageProcessMode::run() {
 	for(const auto& bookName : bookNames){
 		ss << bookName << endl;
 	}
+	//test
 	logger->DebugMsg(ss.str());
 
 
