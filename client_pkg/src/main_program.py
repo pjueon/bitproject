@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
 
         self.th_load = load_thread.Loader(parent = self)
 
-        #self.th_book = book_search.Book_search(parent = self)
+        self.th_book = book_search.Book_search(parent = self)
 
 #========================== Publisher Define =====================================
         self.camera_pub = rospy.Publisher("/camera_toggle",
@@ -88,14 +88,16 @@ class MainWindow(QMainWindow):
         #self.th_book.start()
         try:
             self.launch_select_pub.publish("auto_Start")
+            self.th_book.start()
         except:
             pass
     @Slot()
     def auto_Stop(self):
-        try:
-            self.launch_select_pub.publish("auto_Stop")
-        except:
-            pass
+        #try:
+        self.launch_select_pub.publish("auto_Stop")
+
+        #except:
+        #    pass
 
 #========================== Camera Control Slot Def ============================
     @Slot()

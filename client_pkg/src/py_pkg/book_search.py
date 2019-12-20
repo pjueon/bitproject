@@ -10,16 +10,17 @@ from nav_msgs.msg import MapMetaData, OccupancyGrid
 class Book_search(QThread):
     def __init__(self, parent = None):
         super(Book_search, self).__init__()
-        rospy.Subscriber("/book", std_msgs.msg.String, self.callback)
         self.parent = parent
+
+    def run(self):
+        rospy.Subscriber("/book_cpp_to_python", std_msgs.msg.String, self.callback)
+
     def callback(self, data):
-        #name = unicode(data.data, 'euc-kr').encode('utf-8')
-        #label = QLabel(data.data)
         self.parent.ui.listwidget.addItem(data.data)
-        print(data.data)
 
 def main(args):
   obc = Book_search()
+  rospy.Subscriber("/book_cpp_to_python", std_msgs.msg.String, self.callback)
   rospy.init_node('simple_class')
   try:
     rospy.spin()

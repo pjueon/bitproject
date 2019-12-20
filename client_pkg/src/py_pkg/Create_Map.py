@@ -26,3 +26,7 @@ class create_map(QMainWindow, QWidget):
         if event.type() == QEvent.KeyRelease:
             print("release")
             self.create_pub.publish("S")
+
+    def stop_motor(self):
+        print("release")
+        self.create_pub.publish("S")
