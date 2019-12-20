@@ -21,6 +21,7 @@ from py_pkg import camera_thread
 from py_pkg import map_reader_thread
 from py_pkg import srv_thread
 from py_pkg import load_thread
+from py_pkg import book_search
 
 def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
@@ -36,7 +37,7 @@ class MainWindow(QMainWindow):
         self.camera_flag = 0
         self.loading_flag = True
         self.map_load_flag = False
-        self.map_create_flage = False
+        self.map_create_flag = False
 
 #========================== Auto Control Button init ===========================
         self.ui.Auto_Fineder_Start_BTN.clicked.connect(self.auto_Start)
@@ -56,14 +57,14 @@ class MainWindow(QMainWindow):
         self.th_camera.send_camera_view.connect(self.camera_View_Update)
 
         self.th_map = map_reader_thread.Mapper(parent = self)
-        self.th_map.send_map_view.connect(self.map_View_Update)
 
         self.th_srv = srv_thread.Server(parent = self)
-        self.th_srv.send_server_data.connect(self.srv_Server)
 
         self.th_load = load_thread.Loader(parent = self)
 
-#========================== Publisher init =====================================
+        #self.th_book = book_search.Book_search(parent = self)
+
+#========================== Publisher Define =====================================
         self.camera_pub = rospy.Publisher("/camera_toggle",
                                           Bool,
                                           queue_size = 1)
@@ -84,6 +85,7 @@ class MainWindow(QMainWindow):
 #========================== Auto Control Slot Def ==============================
     @Slot()
     def auto_Start(self):
+        #self.th_book.start()
         try:
             self.launch_select_pub.publish("auto_Start")
         except:
@@ -135,33 +137,46 @@ class MainWindow(QMainWindow):
     @Slot()
     def delete_Map(self):
         if(self.map_load_flag == True):
-            self.map_load_flag = False
-            self.th_load.loading_flag = False
-
             self.th_map.send_map_view.disconnect()
-            self.launch_select_pub.publish("load_map_mode_close")
+        self.map_load_flag = False
+        self.th_load.loading_flag = False
 
-            self.th_map.stop()
-            self.th_map.quit()
-            self.ui.Map_View.setScene(self.view_Clear())
-            self.ui.Map_View.show()
+        self.th_map.stop()
+        self.th_map.quit()
+
+        self.launch_select_pub.publish("load_map_mode_close")
+        self.ui.Map_View.setScene(self.view_Clear())
+        self.ui.Map_View.show()
 
     @Slot()
     def create_Map(self):
-        if(self.map_create_flage == False):
-            self.map_create_flage = True
-            self.th_load.loading.connect(self.loading_map)
+        if(self.map_create_flag == False):
+            self.map_create_flag = True
             self.th_load.loading_flag = True
+
+            self.th_load.loading.connect(self.loading_map)
+            self.th_map.send_map_view.connect(self.map_View_Update)
             self.launch_select_pub.publish("create_map_mode")
             self.ui.Map_View.installEventFilter(self)
             self.ui.Map_View.setFocus()
+
             self.th_load.start()
             self.th_map.start()
 
     @Slot()
     def save_Map(self):
+        if(self.map_create_flag == True):
+            self.th_load.loading_flag = False
+            self.th_map.stop()
+            self.th_map.quit()
 
-        self.th_srv.start()
+            self.launch_select_pub.publish("load_map_mode_close")
+            self.ui.Map_View.setScene(self.view_Clear())
+            self.ui.Map_View.show()
+
+            self.th_load.loading_flag = False
+            self.th_srv.send_server_data.connect(self.srv_Server)
+            self.th_srv.start()
 
 #========================== Thread Data Req, Res Slot Def ======================
     @Slot(object)
@@ -189,7 +204,13 @@ class MainWindow(QMainWindow):
     @Slot(object)
     def srv_Server(self):
         try:
+            self.map_create_flag = True
             self.launch_select_pub.publish("create_map_mode_save")
+            self.th_map.send_map_view.disconnect()
+            self.th_map.stop()
+            self.th_map.quit()
+            self.ui.Map_View.setScene(self.view_Clear())
+            self.ui.Map_View.show()
         except:
             pass
 
@@ -264,7 +285,7 @@ if __name__ == '__main__':
                }
 
     tfnet = TFNet(options)
-    rospy.init_node('dd')
+    rospy.init_node('main_program')
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec_())
