@@ -12,7 +12,7 @@ class Loader(QThread):
     def __init__(self, parent = None):
         super(Loader, self).__init__()
         self.num = None
-        self.text = "Loading"
+        self.text = "Loading..."
         self.loading_flag = True
 
     def run(self):
@@ -21,7 +21,7 @@ class Loader(QThread):
     def view_load(self):
         self.num = 1
         while self.loading_flag:
-            if self.num > 7:
+            if self.num > 10:
                 self.num = 1
             Loading = np.ones((70, self.num * 38, 3), dtype = np.float32) * 255
             newImage = cv2.putText(Loading, self.text[:self.num],

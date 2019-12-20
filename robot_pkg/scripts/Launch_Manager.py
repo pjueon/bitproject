@@ -55,8 +55,7 @@ class launch_manager():
     def __init__(self):
         self.mode_flag = False
         self.auto_flag = False
-        rospy.Subscriber("/launch_select", String, self.launch_callback)
-        rospy.spin()
+        self.sub = rospy.Subscriber("/launch_select", String, self.launch_callback)
 
     def load_map_mode(self):
         self.child = subprocess.Popen(["roslaunch", "mapper_pkg", "load_map_mode.launch"])
@@ -80,12 +79,14 @@ class launch_manager():
                 self.auto_node()
 
             elif (self.auto_flag == True and data.data == "auto_Stop"):
+                print("auto stop!!!!!!!!!!!!!!!!!!!!!!!!!===========")
                 self.node_child.send_signal(signal.SIGINT)
                 self.auto_flag = False
-                
+
             elif (data.data == "load_map_mode_close"):
                 self.child.send_signal(signal.SIGINT)
                 self.mode_flag = False
+
 
             elif (data.data == "create_map_mode_save"):
                 self.child.send_signal(signal.SIGINT)
@@ -107,4 +108,5 @@ if (__name__ == "__main__"):
     rospy.init_node("launch_manager", anonymous=True)
     print("Start Process")
     launch_manager()
+    rospy.spin()
     print("End Process")

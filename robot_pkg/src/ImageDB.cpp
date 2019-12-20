@@ -227,7 +227,6 @@ std::string ImageDB::search(const cv::Mat& img) const {
 
 
 string ImageDB::search(const std::string& filename) const {
-	// 파일 열기
 	Mat src = imread(filename, IMREAD_GRAYSCALE);
 
 	if (src.empty()) {
@@ -239,7 +238,6 @@ string ImageDB::search(const std::string& filename) const {
 }
 
 void ImageDB::load(const std::string& filename) {
-
 	ifstream fin(filename);
 	if (!fin.is_open()) {
 		cerr << "fail to open " << filename << endl;
@@ -258,10 +256,7 @@ void ImageDB::load(const std::string& filename) {
 
 		{
 			stringstream ss(lines[0]);
-			ss >> new_K;
-			ss >> new_L;
-			ss >> new_DATA_DIMENSION;
-			ss >> total_num_of_leafNodes;
+			ss >> new_K >> new_L >> new_DATA_DIMENSION >> total_num_of_leafNodes;
 		}
 
 		K = new_K;
@@ -288,19 +283,21 @@ void ImageDB::load(const std::string& filename) {
 		char tmp;
 		treeImportBuff >> tmp; // '('
 
-		cout << "[DEBUG]트리 구조 읽어오기 성공 " << endl;
+		//cout << "[DEBUG]트리 구조 읽어오기 성공 " << endl;
 
 		//files
 		int num_of_book_Imgs = stoi(lines[2]);
 		cout << "number of book imgs = " << num_of_book_Imgs << endl;
 		int line_num = 3;
 
+		//cout << "===[Booknames]===" << endl;
 		for (; line_num < 3 + num_of_book_Imgs; line_num++) {
+			//cout << lines[line_num] << endl;
 			files.push_back(lines[line_num]);
 		}
+		//cout << "================" << endl;
 
-
-		cout << "[DEBUG]파일명 읽어오기 성공" << endl;
+		//cout << "[DEBUG]파일명 읽어오기 성공" << endl;
 
 		int l1 = line_num;
 
@@ -322,7 +319,7 @@ void ImageDB::load(const std::string& filename) {
 
 		root_node->centers = centerInfo[static_cast<int>(root_node->nodeID)];
 
-		cout << "[DEBUG]center 정보 읽어오기 성공" << endl;
+		//cout << "[DEBUG]center 정보 읽어오기 성공" << endl;
 
 		//leaf node count
 		{
@@ -338,7 +335,7 @@ void ImageDB::load(const std::string& filename) {
 			}
 
 		}
-		cout << "[DEBUG]leaf node count 정보 읽어오기 성공" << endl;
+		//cout << "[DEBUG]leaf node count 정보 읽어오기 성공" << endl;
 
 
 		//weights
@@ -355,7 +352,7 @@ void ImageDB::load(const std::string& filename) {
 			}
 
 		}
-		cout << "[DEBUG]weights 정보 읽어오기 성공" << endl;
+		//cout << "[DEBUG]weights 정보 읽어오기 성공" << endl;
 		line_num++;
 
 		//databaseImgVector
@@ -374,13 +371,15 @@ void ImageDB::load(const std::string& filename) {
 		}
 		cout << "[DEBUG]databaseImgVector 정보 읽어오기 성공" << endl;
 		
-
+		cout << "[DEBUG] line_num=" << line_num << ", lines.size()=" << lines.size() << endl;
 		// build
 		root_node->buildFromFile();
 	}
 	catch (exception & e) {
 		cerr << "[Exception from load()]" << e.what() << endl;
 	}
+
+	cout << "[ImageDB] Load complite" << endl;
 }
 
 //==========================ImageDB===========================
