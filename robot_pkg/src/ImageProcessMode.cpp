@@ -121,14 +121,17 @@ mode ImageProcessMode::run() {
 		ss << bookName << endl;
 	}
 	//test
-	logger->DebugMsg(ss.str());
+	auto result = ss.str();
+
+	logger->DebugMsg(result);
+	mainMachine->sendBookResult(result);
 
 
 	//save imgs (for debug)
 	logger->DebugMsg("Saving Files for debuging...");
 	string filename = "bookshelf" + to_string(mainMachine->getBookshelfID()) + ".jpg";
 
-	const string path = "/home/jetbot/catkin_ws/src/bitproject/";
+	const string path = "/home/jetbot/catkin_ws/src/bitproject/test_imgs/";
 	//logger->DebugMsg("file name: ", filename);
 	//logger->DebugMsg("Path: ", path);
 

@@ -19,12 +19,14 @@ BookImgPreProcessor::BookImgPreProcessor()
 
 
 void BookImgPreProcessor::setImg(const cv::Mat& img) {
-	width = 800;
-	const double factor = double(width) / img.cols;
+	width = 1000;
+	const double factor = img.cols > width? double(width) / img.cols : 1.0;
 
 	height = static_cast<int>(img.rows * factor);
 
 	resize(img, srcImg, Size(width, height));
+
+	bookAreas.clear();
 
 }
 

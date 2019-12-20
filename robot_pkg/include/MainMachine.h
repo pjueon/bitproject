@@ -66,6 +66,8 @@ public:
 	void setBookshelfImg(const cv::Mat&);
 	cv::Mat getBookshelfImg();
 
+	void sendBookResult(const std::string&) const;
+
 private:
 	mode currentMode;
 	std::unordered_map<mode, OperatingMode*> Operation;
@@ -78,6 +80,8 @@ private:
   
 	ros::NodeHandle& n;
 	ros::Publisher motorPub;
+	ros::Publisher bookResultPub;
+
 	ros::Publisher cameraTogglePub;
 
 	void move(const std::string& cmd) const;

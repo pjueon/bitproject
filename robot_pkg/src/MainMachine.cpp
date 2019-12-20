@@ -29,6 +29,7 @@ MainMachine::MainMachine(ros::NodeHandle& n)
 	  logger(new Logger(this, "MainMachine")),
  	  n(n), motorPub(n.advertise<std_msgs::String>("/motor", 1)),
 	  cameraTogglePub(n.advertise<std_msgs::Bool>("/camera_toggle", 1)),
+	  bookResultPub(n.advertise<std_msgs::String>("/book_cpp", 1)),
 	  x(0.0), y(0.0), yaw(0.0), destIdx(0)
 {
 	try {
@@ -101,7 +102,7 @@ void MainMachine::StartMainLoop() {
 //temporary
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
-
+/*
 	constexpr auto filename1 = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/test1.txt";
 	constexpr auto filename2 = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/test2.txt";
 
@@ -138,7 +139,9 @@ void MainMachine::test(){
 	}
 
 	cout << "same? " << boolalpha << (test1[0] == test2[1]) << endl;
+*/
 
+	Operation[mode::ImageProcess]->test();
 	
 	logger->DebugMsg("===test end===");
 }
@@ -164,6 +167,14 @@ double MainMachine::getDestY() const { return destinations[destIdx].y; }
 double MainMachine::getDestYaw() const { return destinations[destIdx].yaw; }
 bool MainMachine::isDestBookshelf() const { return destinations[destIdx].bookshelfID >= 0; }
 int MainMachine::getBookshelfID() const {return destinations[destIdx].bookshelfID; }
+
+
+void MainMachine::sendBookResult(const std::string& data) const {
+	logger->DebugMsg("sendBookResult() called");
+	std_msgs::String msg;	
+	msg.data = data;
+	bookResultPub.publish(msg);
+}
 
 
 void MainMachine::setBookshelfImg(const cv::Mat& img){	bookshelfImg = img; } // [WARN] shallow copy
