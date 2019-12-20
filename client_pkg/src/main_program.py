@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self.ui.Form.installEventFilter(self)
-        self.ui.statusbar.showMessage('Ready')
+        self.ui.statusbar.showMessage('Ready', 5000)
         self.camera_flag = 0
         self.loading_flag = True
         self.map_load_flag = False
@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
 
         self.th_book = book_search_thread.Book_search(parent = self)
 
-#========================== Publisher Define =====================================
+#========================== Publisher Define ===================================
         self.camera_pub = rospy.Publisher("/camera_toggle",
                                           Bool,
                                           queue_size = 1)
@@ -86,6 +86,7 @@ class MainWindow(QMainWindow):
     @Slot()
     def auto_Start(self):
         try:
+            self.ui.statusbar.showMessage('Auto Drive Start')
             self.launch_select_pub.publish("auto_Start")
             self.th_book.start()
         except:
@@ -93,6 +94,8 @@ class MainWindow(QMainWindow):
     @Slot()
     def auto_Stop(self):
         try:
+
+            self.ui.statusbar.showMessage('Auto Drive End', 5000)
             self.launch_select_pub.publish("auto_Stop")
 
         except:
@@ -103,6 +106,7 @@ class MainWindow(QMainWindow):
     def Camera_Toggle_BTN(self):
         try:
             if (self.camera_flag == 0):
+                self.ui.statusbar.showMessage('Camera On')
                 self.th_camera.send_camera_view.connect(self.camera_View_Update)
                 self.th_camera.start()
                 self.camera_flag = 1
@@ -110,14 +114,7 @@ class MainWindow(QMainWindow):
                 self.ui.Camera_Toggle_BTN.setText("카메라 Off")
                 print("카메라 On")
             else:
-                self.th_camera.send_camera_view.disconnect()
-                self.th_camera.stop()
-                self.camera_flag = 0
-                self.camera_pub.publish(self.camera_flag)
-                self.ui.Camera_Toggle_BTN.setText("카메라 On")
-                print("카메라 Off")
-                self.ui.Camera_View.setScene(self.view_Clear())
-                self.ui.Camera_View.show()
+                self.camera_off()
         except:
             pass
 
@@ -149,6 +146,8 @@ class MainWindow(QMainWindow):
         self.ui.Map_View.setScene(self.view_Clear())
         self.ui.Map_View.show()
 
+        self.camera_off()
+
     @Slot()
     def create_Map(self):
         if(self.map_create_flag == False):
@@ -178,6 +177,7 @@ class MainWindow(QMainWindow):
             self.th_load.loading_flag = False
             self.th_srv.send_server_data.connect(self.srv_Server)
             self.th_srv.start()
+            self.camera_off()
 
 #========================== Thread Data Req, Res Slot Def ======================
     @Slot(object)
@@ -223,15 +223,15 @@ class MainWindow(QMainWindow):
             self.ui.Map_View.show()
         except:
             pass
-
+#========================== Event Filter =======================================
     def eventFilter(self, obj, event):
         if event.type() == QEvent.Close:
             print ("================ User has clicked the red x on the main window =================\n\n\n")
 
-            del self.CM
+            #del self.CM
             self.launch_select_pub.publish("auto_Stop")
             self.launch_select_pub.publish("load_map_mode_close")
-            
+
             event.accept()
             print("============================= End Mainwindow ===================================\n\n\n")
 
@@ -270,6 +270,20 @@ class MainWindow(QMainWindow):
         scene = QGraphicsScene()
         scene.addItem(item)
         return scene
+
+    def camera_off(self):
+        if (self.camera_flag == 1):
+            self.ui.statusbar.showMessage('Camera Off', 5000)
+
+            self.th_camera.send_camera_view.disconnect()
+            self.th_camera.stop()
+            self.camera_flag = 0
+            self.camera_pub.publish(self.camera_flag)
+            self.ui.Camera_Toggle_BTN.setText("카메라 On")
+            print("카메라 Off")
+            self.ui.Camera_View.setScene(self.view_Clear())
+            self.ui.Camera_View.show()
+
 
 if __name__ == '__main__':
 
