@@ -259,7 +259,8 @@ std::vector<cv::Mat> BookImgPreProcessor::getBookImgs() {
 
 		Mat transformMat = getPerspectiveTransform(srcPoints, dstPoints);
 
-		warpPerspective(srcImg, ret[i], transformMat, Size(w, h));
+		//warpPerspective(srcImg, ret[i], transformMat, Size(w, h));
+		warpPerspective(grayImg, ret[i], transformMat, Size(w, h));
 	}
 
 	return ret;
@@ -321,11 +322,11 @@ void BookImgPreProcessor::run() {
 
 
 	// Èæ¹éÀ¸·Î º¯È¯
-	Mat gray;
-	cvtColor(srcImg, gray, COLOR_RGB2GRAY);
+	//Mat gray;
+	cvtColor(srcImg, grayImg, COLOR_RGB2GRAY);
 
 	// ¿§Áö °ËÃâ(Canny ¿§Áö °ËÃâ±â)
-	Canny(gray, edgeImg, 50, 150);
+	Canny(grayImg, edgeImg, 50, 150);
 
 	//ÂªÀº ¿§Áö Á¦°Å
 	removeShortEdges(200);
