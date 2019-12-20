@@ -18,6 +18,9 @@ class Loader(QThread):
     def run(self):
         self.view_load()
 
+    def __del__(self):
+        print("============================= End loading Thread ===============================\n\n")
+
     def view_load(self):
         self.num = 1
         while self.loading_flag:

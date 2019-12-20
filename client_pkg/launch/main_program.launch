@@ -1,0 +1,5 @@
+<launch>
+  <node name="main_program" pkg="client_pkg" type="main_program.py" output="screen"/>
+  <node name="book_Listener" pkg="client_pkg" type="book_Listener.py" output="screen"/>
+
+</launch>

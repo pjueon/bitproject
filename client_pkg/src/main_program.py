@@ -21,7 +21,7 @@ from py_pkg import camera_thread
 from py_pkg import map_reader_thread
 from py_pkg import srv_thread
 from py_pkg import load_thread
-from py_pkg import book_search
+from py_pkg import book_search_thread
 
 def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
 
         self.th_load = load_thread.Loader(parent = self)
 
-        self.th_book = book_search.Book_search(parent = self)
+        self.th_book = book_search_thread.Book_search(parent = self)
 
 #========================== Publisher Define =====================================
         self.camera_pub = rospy.Publisher("/camera_toggle",
@@ -85,7 +85,6 @@ class MainWindow(QMainWindow):
 #========================== Auto Control Slot Def ==============================
     @Slot()
     def auto_Start(self):
-        #self.th_book.start()
         try:
             self.launch_select_pub.publish("auto_Start")
             self.th_book.start()
@@ -93,11 +92,11 @@ class MainWindow(QMainWindow):
             pass
     @Slot()
     def auto_Stop(self):
-        #try:
-        self.launch_select_pub.publish("auto_Stop")
+        try:
+            self.launch_select_pub.publish("auto_Stop")
 
-        #except:
-        #    pass
+        except:
+            pass
 
 #========================== Camera Control Slot Def ============================
     @Slot()
@@ -230,16 +229,9 @@ class MainWindow(QMainWindow):
             print ("================ User has clicked the red x on the main window =================\n\n\n")
 
             del self.CM
-            #self.launch_select_pub.publish("load_map_mode_close")
-            '''
-            if self.th_camera.isRunning():
-                self.th_camera.stop()
-                self.th_camera.send_camera_view.disconnect()
-                print("============================= Closing Camera Thread ==========================\n\n\n")
-
-                self.th_camera.quit()
-            del self.th_map
-            '''
+            self.launch_select_pub.publish("auto_Stop")
+            self.launch_select_pub.publish("load_map_mode_close")
+            
             event.accept()
             print("============================= End Mainwindow ===================================\n\n\n")
 

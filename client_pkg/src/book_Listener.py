@@ -7,15 +7,13 @@ from std_msgs.msg import String
 def callback(data):
     name = unicode(data.data, 'euc-kr').encode('utf-8')
     pub.publish(name)
+    print(name)
 
-def listener():
 
-    rospy.init_node('listr', anonymous=True)
-    rospy.Subscriber('/book_cpp', String, callback)
 
 if __name__ == '__main__':
+    rospy.init_node('listr', anonymous=True)
     pub = rospy.Publisher("/book_cpp_to_python", String, queue_size = 1)
-    try:
-        listener()
-    except rospy.ROSInterruptException:
-        pass
+    rospy.Subscriber('/test_topic', String, callback)
+
+    rospy.spin()

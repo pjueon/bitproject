@@ -11,15 +11,21 @@ class Book_search(QThread):
     def __init__(self, parent = None):
         super(Book_search, self).__init__()
         self.parent = parent
+        self.sub = None
 
     def run(self):
-        rospy.Subscriber("/book_cpp_to_python", std_msgs.msg.String, self.callback)
+        self.sub = rospy.Subscriber("/book_cpp_to_python", std_msgs.msg.String, self.callback)
+
+    def __del__(self):
+        if not self.sub == None:
+            self.sub.unregister()
+        print("============================= End Book_search Thread ===========================\n\n")
 
     def callback(self, data):
         self.parent.ui.listwidget.addItem(data.data)
+        self.parent.ui.listwidget.scrollToBottom()
 
 def main(args):
-  obc = Book_search()
   rospy.Subscriber("/book_cpp_to_python", std_msgs.msg.String, self.callback)
   rospy.init_node('simple_class')
   try:
