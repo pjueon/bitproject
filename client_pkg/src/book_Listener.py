@@ -12,7 +12,7 @@ def callback(data):
 
 
 if __name__ == '__main__':
-    rospy.init_node('listr', anonymous=True)
+    rospy.init_node('book_listener', anonymous=True)
     pub = rospy.Publisher("/book_cpp_to_python", String, queue_size = 1)
     rospy.Subscriber('/book_cpp', String, callback)
 

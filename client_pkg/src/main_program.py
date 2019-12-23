@@ -4,6 +4,7 @@ import cv2
 import rospy
 import numpy as np
 import os
+import time
 
 from darkflow.net.build import TFNet
 
@@ -16,12 +17,8 @@ from PySide2.QtCore import QThread, Signal, Slot, QEvent
 
 from main_ui import Ui_Form
 
-from py_pkg import Create_Map
-from py_pkg import camera_thread
-from py_pkg import map_reader_thread
-from py_pkg import srv_thread
-from py_pkg import load_thread
-from py_pkg import book_search_thread
+from py_pkg import (Create_Map, camera_thread, map_reader_thread,
+                    srv_thread, load_thread, book_search_thread)
 
 def fixpath(path):
     return os.path.abspath(os.path.expanduser(path))
@@ -89,6 +86,7 @@ class MainWindow(QMainWindow):
             self.ui.statusbar.showMessage('Auto Drive Start')
             self.launch_select_pub.publish("auto_Start")
             self.th_book.start()
+            self.ui.Map_View.setFocus()
         except:
             pass
     @Slot()
@@ -106,13 +104,7 @@ class MainWindow(QMainWindow):
     def Camera_Toggle_BTN(self):
         try:
             if (self.camera_flag == 0):
-                self.ui.statusbar.showMessage('Camera On')
-                self.th_camera.send_camera_view.connect(self.camera_View_Update)
-                self.th_camera.start()
-                self.camera_flag = 1
-                self.camera_pub.publish(self.camera_flag)
-                self.ui.Camera_Toggle_BTN.setText("카메라 Off")
-                #print("카메라 On")
+                self.camera_on()
             else:
                 self.camera_off()
         except:
@@ -124,6 +116,9 @@ class MainWindow(QMainWindow):
         if(self.map_load_flag == False):
             self.map_load_flag = True
             self.th_load.loading_flag = True
+
+            self.ui.Map_View.installEventFilter(self)
+            self.ui.Map_View.setFocus()
 
             self.th_load.loading.connect(self.loading_map)
             self.th_map.send_map_view.connect(self.map_View_Update)
@@ -140,11 +135,14 @@ class MainWindow(QMainWindow):
         self.map_create_flag = False
         self.th_load.loading_flag = False
 
+        self.ui.Map_View.removeEventFilter(self)
+
         self.th_map.stop()
         self.th_map.quit()
 
         self.th_load.quit()
 
+        time.sleep(0.1)
         self.launch_select_pub.publish("load_map_mode_close")
         self.ui.Map_View.setScene(self.view_Clear())
         self.ui.Map_View.show()
@@ -161,7 +159,6 @@ class MainWindow(QMainWindow):
             self.th_map.send_map_view.connect(self.map_View_Update)
             self.launch_select_pub.publish("create_map_mode")
             self.ui.Map_View.installEventFilter(self)
-            self.ui.Map_View.setFocus()
 
             self.th_load.start()
             self.th_map.start()
@@ -171,6 +168,8 @@ class MainWindow(QMainWindow):
         if(self.map_create_flag == True):
             self.th_map.stop()
             self.th_map.quit()
+
+            self.ui.Map_View.removeEventFilter(self)
 
             self.launch_select_pub.publish("load_map_mode_close")
             self.ui.Map_View.setScene(self.view_Clear())
@@ -188,6 +187,7 @@ class MainWindow(QMainWindow):
 
             self.th_load.loading_flag = False
             self.th_load.loading.disconnect()
+            self.camera_on()
         try:
             scene = self.image2Qpixmap(msg)
             self.ui.Map_View.setScene(scene)
@@ -231,6 +231,10 @@ class MainWindow(QMainWindow):
             print ("================ User has clicked the red x on the main window =================\n\n\n")
 
             #del self.CM
+            if(self.th_load.isRunning()):
+                self.th_load.loading_flag = False
+                self.th_load.quit()
+                self.th_load.wait(2)
             self.launch_select_pub.publish("auto_Stop")
             self.launch_select_pub.publish("load_map_mode_close")
 
@@ -273,6 +277,16 @@ class MainWindow(QMainWindow):
         scene.addItem(item)
         return scene
 
+    def camera_on(self):
+        if (self.camera_flag == 0):
+            self.ui.statusbar.showMessage('Camera On')
+            self.th_camera.send_camera_view.connect(self.camera_View_Update)
+            self.th_camera.start()
+            self.camera_flag = 1
+            self.camera_pub.publish(self.camera_flag)
+            self.ui.Camera_Toggle_BTN.setText("카메라 Off")
+            #print("카메라 On")
+
     def camera_off(self):
         if (self.camera_flag == 1):
             self.ui.statusbar.showMessage('Camera Off', 5000)
@@ -283,6 +297,7 @@ class MainWindow(QMainWindow):
             self.camera_pub.publish(self.camera_flag)
             self.ui.Camera_Toggle_BTN.setText("카메라 On")
             #print("카메라 Off")
+            time.sleep(0.1)
             self.ui.Camera_View.setScene(self.view_Clear())
             self.ui.Camera_View.show()
 
@@ -295,7 +310,7 @@ if __name__ == '__main__':
                }
 
     tfnet = TFNet(options)
-    rospy.init_node('main_program')
+    rospy.init_node('main_program', anonymous=True)
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec_())

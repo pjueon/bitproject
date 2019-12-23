@@ -43,6 +43,10 @@ class Server(QThread):
                         self.send_server_data.emit()
                 except rospy.ServiceException as e:
                     print ("Service call failed: %s"%(e))
+
+                finally:
+                    self.parent.ui.statusbar.showMessage("Map Save!")
+                    self.send_server_data.emit()
         except rospy.ServiceException as e:
             print ("Service call failed: %s"%(e))
 

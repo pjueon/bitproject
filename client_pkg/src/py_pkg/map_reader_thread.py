@@ -16,6 +16,7 @@ class Mapper(QThread):
     send_map_view = Signal(object)
     def __init__(self, parent=None):
         super(Mapper, self).__init__()
+        self.state = None
         self.ros_Width = 0
         self.ros_Height = 0
         self.origin_x = 0
@@ -41,7 +42,8 @@ class Mapper(QThread):
         self.state = rospy.Subscriber("/map", OccupancyGrid, self.mapCallback)
 
     def stop(self):
-        self.state.unregister()
+        if(not self.state == None):
+            self.state.unregister()
 
     def __del__(self):
         print("============================= End Map Reader Thread ============================\n\n")
