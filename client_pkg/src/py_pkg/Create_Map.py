@@ -10,7 +10,7 @@ class create_map(QMainWindow, QWidget):
         # Front 87 Right 68 Left 65 Back 83
         if event.type() == QEvent.KeyPress:
 
-            print("press")
+            #print("press")
             if(event.key() == 68 and event.key() == 87):
                 self.create_pub.publish("FR")
             elif(event.key() == 65 and event.key() == 87):
@@ -24,9 +24,9 @@ class create_map(QMainWindow, QWidget):
             elif(event.key() == 83):
                 self.create_pub.publish("B")
         if event.type() == QEvent.KeyRelease:
-            print("release")
+            #print("release")
             self.create_pub.publish("S")
 
     def stop_motor(self):
-        print("release")
+        #print("release")
         self.create_pub.publish("S")
