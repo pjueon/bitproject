@@ -90,17 +90,19 @@ mode TakePhotoMode::run() {
 
 	rotateTo(atan2(bookshelf_y - mainMachine->getY(), bookshelf_x - mainMachine->getX()));
 	mainMachine->updatePosition();
-	logger->DebugMsg("TEST, current yaw : ", mainMachine->getYaw());
+	//logger->DebugMsg("TEST, current yaw : ", mainMachine->getYaw());
 	
 	mainMachine->updatePosition();
 	logger->DebugMsg("final yaw : ", mainMachine->getYaw());
 
 	mainMachine->stop();
 	logger->DebugMsg("please wait...");	
-	sleep(7000);
+	sleep(9000);
 
 	auto boxinfo = getYOLOBoxInfo();
 	auto frame = getPhoto();
+
+	boxinfo[3] = 1.0;
 	
 	logger->DebugMsg("image size: ", frame.cols, " * ", frame.rows);
 	logger->DebugMsg("boxinfo: ", boxinfo[0], ", ", boxinfo[1], ", ", boxinfo[2], ", ", boxinfo[3]);
@@ -238,13 +240,14 @@ double TakePhotoMode::angleTune(double frontRagne, double sideRange) {
 
 	morphologyEx(frontSide, frontSide, MORPH_CLOSE, Mat());
 	
+/*
 	//==for debug==
 	const string path = "/home/jetbot/catkin_ws/src/bitproject/";
 	string filename = "angleTune_"+ to_string(frontRagne)+ "_" + to_string(sideRange) + "_" + to_string(mainMachine->getBookshelfID());
 	filename += ".jpg";
 	imwrite(path + filename, frontSide);
 	//=========
-
+*/
 
 	vector<Vec4i> lines;
 	HoughLinesP(frontSide, lines, 1, PI/180, 10, 5, 10);

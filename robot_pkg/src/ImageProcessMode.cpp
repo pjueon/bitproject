@@ -117,16 +117,17 @@ mode ImageProcessMode::run() {
 	vector<string> bookNames;
 	bookNames.reserve(bookImgs.size());
 
-	try{
-		// result !!!!
-		for(const auto& img: bookImgs){
-			bookNames.emplace_back(db->search(img));
+	// result !!!!
+	for(const auto& img: bookImgs){
+		try{
+			bookNames.emplace_back(db->search(img));		
 		}
-		// result !!!!
+		catch(exception& e){
+			logger->DebugMsg("Exception: ", e.what());
+		}
 	}
-	catch(exception& e){
-		logger->DebugMsg("Exception: ", e.what());
-	}
+	logger->DebugMsg("bookNames.size(): ", bookNames.size());
+
 
 	// DEBUG
 	stringstream ss;

@@ -1,30 +1,151 @@
 [Debug] From: [MainMachine], Message: ===destinations===
-[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.8, 0.7, 3.1, 0
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.8, 0.65, 3.1, 0
 [Debug] From: [MainMachine], Message: ===destinations===
-[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.82, 1.72, 3.1, 1
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.82, 1.73, 3.1, 1
 [Debug] From: [MainMachine], Message: ===destinations===
 [Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.1, 0.08, 0, -1
 [Debug] From: [MainMachine], Message: ==========
-[Debug] From: [MainMachine], Message: ===test start===
-[Debug] From: [ImageProcess], Message: This is a test code.
-[Debug] From: [ImageProcess], Message: num of books in the bookshelf photo: 7
-[Debug] From: [ImageProcess], Message: Books in bookshelf 
-프로그래머로 사는 법
-열혈 자료구조
-함수형 반응형 프로그래밍
+[Debug] From: [Standby], Message: run() start!
+[Debug] From: [Standby], Message: please wait...
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [AutoDrive], Message: getNextRoute() start!
+[Debug] From: [AutoDrive], Message: map data loaded!
+[Debug] From: [AutoDrive], Message: run() start!
+[Debug] From: [AutoDrive], Message: run() end!
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [TakePhoto], Message: getNextInitYaw() start!
+[Debug] From: [TakePhoto], Message: run() start!
+[Debug] From: [TakePhoto], Message: initYaw:3.1
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.07769
+[Debug] From: [TakePhoto], Message: angleTune() start!
+[Debug] From: [TakePhoto], Message: angleTune() end!
+[Debug] From: [TakePhoto], Message: correctYaw : 3.13827
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: After angleTune, current yaw : 3.0478
+[Debug] From: [TakePhoto], Message: 
+
+============
+getBookshelfPos() start!
+[Debug] From: [TakePhoto], Message: Map Data loaded
+[Debug] From: [TakePhoto], Message: Bookshelf position : 0.315933, 0.623091, current position: 0.732053, 0.638752
+[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.416414
+[Debug] From: [TakePhoto], Message: getBookshelfPos() end!
+============
+
+[Debug] From: [TakePhoto], Message: new position : 1.26593, 0.619939, current position: 0.732053, 0.638752
+[Debug] From: [TakePhoto], Message: moveBackTo() start!
+[Debug] From: [TakePhoto], Message: moveBackTo() end!
+[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.19173, 0.578753
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: final yaw : 3.08753
+[Debug] From: [TakePhoto], Message: please wait...
+[Debug] From: [TakePhoto], Message: getYOLOBoxInfo() called!
+[Debug] From: [MainMachine], Message: camera on called!!!
+[Debug] From: [TakePhoto], Message: image size: 1920 * 1080
+[Debug] From: [TakePhoto], Message: boxinfo: 0.00899, 0.045958, 0.526518, 1
+[Debug] From: [TakePhoto], Message: 
+
+============
+Took a Photo!!!!!!
+============
+
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [ImageProcess], Message: init() called
+[Debug] From: [ImageProcess], Message: run() start!
+[Debug] From: [ImageProcess], Message: Doing Image Processing...(Just Test)
+[Debug] From: [ImageProcess], Message: got bookImgs, size: 7
+[Debug] From: [ImageProcess], Message: saved preprocessed results
+[Debug] From: [ImageProcess], Message: Saving Files for debuging...
+[Debug] From: [ImageProcess], Message: Saving Images Done!
+[Debug] From: [ImageProcess], Message: bookNames.size(): 7
+[Debug] From: [ImageProcess], Message: Books in bookshelf 0: 
+아이폰 UX 프로그래밍
+모던 C++ 디자인 패턴
+맛있는 디자인 드림위버 CS6
 윈도우 모바일 애플리케이션 개발 가이드
-비트 프로젝트 110호
+프로그래밍 수련법
 모던 C++로 배우는 동시성 프로그래밍
 Microsoft SQL Server 2000
 
-[Debug] From: [ImageProcess], Message: num of books in the bookshelf photo: 6
-[Debug] From: [ImageProcess], Message: Books in bookshelf 
+[Debug] From: [MainMachine], Message: =================
+sendBookResult() called
+=================
+[Debug] From: [ImageProcess], Message: Done!!(Just Test)
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [AutoDrive], Message: getNextRoute() start!
+[Debug] From: [AutoDrive], Message: map data loaded!
+[Debug] From: [AutoDrive], Message: run() start!
+[Debug] From: [AutoDrive], Message: run() end!
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [TakePhoto], Message: getNextInitYaw() start!
+[Debug] From: [TakePhoto], Message: run() start!
+[Debug] From: [TakePhoto], Message: initYaw:3.1
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.03106
+[Debug] From: [TakePhoto], Message: angleTune() start!
+[Debug] From: [TakePhoto], Message: angleTune() end!
+[Debug] From: [TakePhoto], Message: correctYaw : -3.08415
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: After angleTune, current yaw : 3.02317
+[Debug] From: [TakePhoto], Message: 
+
+============
+getBookshelfPos() start!
+[Debug] From: [TakePhoto], Message: Map Data loaded
+[Debug] From: [TakePhoto], Message: Bookshelf position : 0.391243, 1.80915, current position: 0.807105, 1.72694
+[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.423911
+[Debug] From: [TakePhoto], Message: getBookshelfPos() end!
+============
+
+[Debug] From: [TakePhoto], Message: new position : 1.33968, 1.86369, current position: 0.807105, 1.72694
+[Debug] From: [TakePhoto], Message: moveBackTo() start!
+[Debug] From: [TakePhoto], Message: moveBackTo() end!
+[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.26469, 1.83422
+[Debug] From: [TakePhoto], Message: rotateTo() start!
+[Debug] From: [TakePhoto], Message: rotateTo() end!
+[Debug] From: [TakePhoto], Message: final yaw : -3.1062
+[Debug] From: [TakePhoto], Message: please wait...
+[Debug] From: [TakePhoto], Message: getYOLOBoxInfo() called!
+[Debug] From: [MainMachine], Message: camera on called!!!
+[Debug] From: [TakePhoto], Message: image size: 1920 * 1080
+[Debug] From: [TakePhoto], Message: boxinfo: 0.132134, 0.069786, 0.728538, 1
+[Debug] From: [TakePhoto], Message: 
+
+============
+Took a Photo!!!!!!
+============
+
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [ImageProcess], Message: init() called
+[Debug] From: [ImageProcess], Message: run() start!
+[Debug] From: [ImageProcess], Message: Doing Image Processing...(Just Test)
+[Debug] From: [ImageProcess], Message: got bookImgs, size: 6
+[Debug] From: [ImageProcess], Message: saved preprocessed results
+[Debug] From: [ImageProcess], Message: Saving Files for debuging...
+[Debug] From: [ImageProcess], Message: Saving Images Done!
+[Debug] From: [ImageProcess], Message: bookNames.size(): 6
+[Debug] From: [ImageProcess], Message: Books in bookshelf 1: 
 ADSI
-TCP/IP 소켓 프로그래밍
+C++ 멀티스레딩 정복하기
 이것이 자바다 1
+Pro Git
 리눅스 네트워크 프로그래밍
-이것이 자바다 1
 러닝! OpenCV 3
 
+[Debug] From: [MainMachine], Message: =================
+sendBookResult() called
+=================
 [Debug] From: [ImageProcess], Message: Done!!(Just Test)
-[Debug] From: [MainMachine], Message: ===test end===
+[Debug] From: [MainMachine], Message: changeMode() called
+[Debug] From: [AutoDrive], Message: getNextRoute() start!
+[Debug] From: [AutoDrive], Message: map data loaded!
+[Debug] From: [AutoDrive], Message: run() start!
+[Debug] From: [AutoDrive], Message: run() end!
+[Debug] From: [MainMachine], Message: DONE!!
+[Debug] From: [MainMachine], Message: changeMode() called

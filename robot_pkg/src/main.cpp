@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
 	MainMachine mainMachine(n);
 
 	try{
-		//mainMachine.StartMainLoop();
-		mainMachine.test();
+		mainMachine.StartMainLoop();
+		//mainMachine.test();
 	}
 	catch(exception& e){
 		mainMachine.stop();

@@ -342,14 +342,13 @@ void BookImgPreProcessor::run() {
 
 	addWeighted(grayImg, 0.2, equalized, 0.8, 0, grayImg);
 
-	GaussianBlur(grayImg, grayImg, Size(3, 3), 1);
+	Mat blured1, blured2;
 
-	Mat blured;
-	bilateralFilter(grayImg, blured, -1, 10, 5);
-	blured.copyTo(grayImg);
+	GaussianBlur(grayImg, blured1, Size(3, 3), 1);
+	bilateralFilter(blured1, blured2, -1, 10, 5);
 
 	// øß¡ˆ ∞À√‚(Canny øß¡ˆ ∞À√‚±‚)
-	Canny(grayImg, edgeImg, 50, 150);
+	Canny(blured2, edgeImg, 50, 150);
 
 	//morphologyEx(edgeImg, edgeImg, MORPH_CLOSE, Mat());
 

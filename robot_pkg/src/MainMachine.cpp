@@ -103,44 +103,6 @@ void MainMachine::StartMainLoop() {
 //temporary
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
-/*
-	constexpr auto filename1 = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/test1.txt";
-	constexpr auto filename2 = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/test2.txt";
-
-	ifstream fin1(filename1);
-	ifstream fin2(filename2);
-
-	if (!fin1.is_open()) {
-		cerr << "fail to open " << filename1 << endl;
-		return;
-	}
-
-	if (!fin2.is_open()) {
-		cerr << "fail to open " << filename2 << endl;
-		return;
-	}
-
-
-	vector<string> test1;
-	for(string line; getline(fin1, line); ) {
-		test1.push_back(line);
-	}
-
-	vector<string> test2;
-	for(string line; getline(fin2, line); ) {
-		test2.push_back(line);
-	}
-
-	
-	cout << "test1.size() =" << test1.size() << endl;
-	cout << "test2.size() =" << test2.size() << endl;	
-
-	for(int i=0; i < test1.size(); i++){
-		cout << "i:" << i << ", same?"<< boolalpha << (test1[i] == test2[i]) << endl; 
-	}
-
-	cout << "same? " << boolalpha << (test1[0] == test2[1]) << endl;
-*/
 
 	Operation[mode::ImageProcess]->test();
 	
@@ -171,7 +133,7 @@ int MainMachine::getBookshelfID() const {return destinations[destIdx].bookshelfI
 
 
 void MainMachine::sendBookResult(const std::string& data) const {
-	logger->DebugMsg("sendBookResult() called");
+	logger->DebugMsg("=================\nsendBookResult() called\n=================");
 	std_msgs::String msg;	
 	msg.data = data;
 	bookResultPub.publish(msg);
