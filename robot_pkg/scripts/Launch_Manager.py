@@ -55,6 +55,7 @@ class launch_manager():
     def __init__(self):
         self.mode_flag = False
         self.auto_flag = False
+        self.pub = rospy.Publisher("/motor", String, queue_size = 1)
         self.sub = rospy.Subscriber("/launch_select", String, self.launch_callback)
 
     def load_map_mode(self):
@@ -79,9 +80,9 @@ class launch_manager():
                 self.auto_node()
 
             elif (self.auto_flag == True and data.data == "auto_Stop"):
-                print("auto stop!!!!!!!!!!!!!!!!!!!!!!!!!===========")
                 self.node_child.send_signal(signal.SIGINT)
                 self.auto_flag = False
+                self.pub.publish("S")
 
             elif (data.data == "load_map_mode_close"):
                 self.child.send_signal(signal.SIGINT)

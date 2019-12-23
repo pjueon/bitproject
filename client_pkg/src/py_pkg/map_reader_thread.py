@@ -44,7 +44,7 @@ class Mapper(QThread):
         self.state.unregister()
 
     def __del__(self):
-        print("============================= End Map Reader Thread ============================")
+        print("============================= End Map Reader Thread ============================\n\n")
 
     def mapCallback(self, data):
 
