@@ -14,6 +14,6 @@ def callback(data):
 if __name__ == '__main__':
     rospy.init_node('listr', anonymous=True)
     pub = rospy.Publisher("/book_cpp_to_python", String, queue_size = 1)
-    rospy.Subscriber('/test_topic', String, callback)
+    rospy.Subscriber('/book_cpp', String, callback)
 
     rospy.spin()

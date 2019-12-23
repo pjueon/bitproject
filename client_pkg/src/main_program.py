@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
                 self.camera_flag = 1
                 self.camera_pub.publish(self.camera_flag)
                 self.ui.Camera_Toggle_BTN.setText("카메라 Off")
-                print("카메라 On")
+                #print("카메라 On")
             else:
                 self.camera_off()
         except:
@@ -137,10 +137,13 @@ class MainWindow(QMainWindow):
         if(self.map_load_flag == True):
             self.th_map.send_map_view.disconnect()
         self.map_load_flag = False
+        self.map_create_flag = False
         self.th_load.loading_flag = False
 
         self.th_map.stop()
         self.th_map.quit()
+
+        self.th_load.quit()
 
         self.launch_select_pub.publish("load_map_mode_close")
         self.ui.Map_View.setScene(self.view_Clear())
@@ -166,7 +169,6 @@ class MainWindow(QMainWindow):
     @Slot()
     def save_Map(self):
         if(self.map_create_flag == True):
-            self.th_load.loading_flag = False
             self.th_map.stop()
             self.th_map.quit()
 
@@ -205,7 +207,7 @@ class MainWindow(QMainWindow):
     @Slot(object)
     def srv_Server(self):
         try:
-            self.map_create_flag = True
+            self.map_create_flag = False
             self.launch_select_pub.publish("create_map_mode_save")
             self.th_map.send_map_view.disconnect()
             self.th_map.stop()
@@ -280,7 +282,7 @@ class MainWindow(QMainWindow):
             self.camera_flag = 0
             self.camera_pub.publish(self.camera_flag)
             self.ui.Camera_Toggle_BTN.setText("카메라 On")
-            print("카메라 Off")
+            #print("카메라 Off")
             self.ui.Camera_View.setScene(self.view_Clear())
             self.ui.Camera_View.show()
 
