@@ -19,7 +19,7 @@ using namespace cv;
 ImageProcessMode::ImageProcessMode(MainMachine* const mainMachine)
 	:OperatingMode(mainMachine, "ImageProcess"), db(make_unique<ImageDB>()), pre_processor(make_unique<BookImgPreProcessor>())
 {
-	constexpr auto filename = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/imgdb.vtree";
+	constexpr auto filename = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/imgdb_demo.vtree";
 	db->load(filename);
 }
 
