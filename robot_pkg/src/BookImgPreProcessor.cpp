@@ -350,10 +350,15 @@ void BookImgPreProcessor::run() {
 	// 엣지 검출(Canny 엣지 검출기)
 	Canny(blured2, edgeImg, 50, 150);
 
+
+	//test
+	blured2.copyTo(grayImg);
+
+
 	//morphologyEx(edgeImg, edgeImg, MORPH_CLOSE, Mat());
 
 	//짧은 엣지 제거
-	removeShortEdges(200);
+	removeShortEdges(220);
 
 	// 허프 변환으로 직선 추출
 	vector<Vec4i> lines;
