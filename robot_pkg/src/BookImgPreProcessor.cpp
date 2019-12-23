@@ -19,14 +19,20 @@ BookImgPreProcessor::BookImgPreProcessor()
 
 
 void BookImgPreProcessor::setImg(const cv::Mat& img) {
-	width = 1000;
-	const double factor = img.cols > width? double(width) / img.cols : 1.0;
-
-	height = static_cast<int>(img.rows * factor);
-
-	resize(img, srcImg, Size(width, height));
-
+	resizeIfNecessary(img, srcImg, 850, 1300);
+	height = srcImg.rows;
+	width = srcImg.cols;
 	bookAreas.clear();
+
+	//constexpr int maximum_width = 1000;
+	//const double factor = img.cols > maximum_width? double(maximum_width) / img.cols : 1.0;
+
+	//height = static_cast<int>(img.rows * factor);
+	//width = static_cast<int>(img.cols * factor);
+
+	//resize(img, srcImg, Size(width, height));
+
+	//bookAreas.clear();
 
 }
 
@@ -59,7 +65,8 @@ void BookImgPreProcessor::saveResult(const string& filenamePrefix) {
 
 	// 결과 파일로 저장
 	string filenameSuffix = ".jpg";
-	imwrite(filenamePrefix + "_edge" + filenameSuffix, trimmedEdgeImg);
+	imwrite(filenamePrefix + "_edge" + filenameSuffix, edgeImg);
+	imwrite(filenamePrefix + "_trimmed_edge" + filenameSuffix, trimmedEdgeImg);
 	imwrite(filenamePrefix + "_fit_result" + filenameSuffix, resultImg);
 
 }
@@ -176,6 +183,8 @@ int BookImgPreProcessor::GapBetweenVLines(const Vec4i& line1, const Vec4i& line2
 // 책이 있을 수 있는 영역 찾기
 // 반드시 정렬(x좌표 기준)된 수직선들을 사용할 것!!!
 void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vector<Vec4i>& boarderLines, const int GapThreshold) {
+	cerr << "BookImgPreProcessor::findBookAreas called" << endl;
+
 	size_t totalVLineNum = sortedVLines.size();
 	size_t lastBoarderIdx = totalVLineNum;
 	for (size_t i = 0; i < totalVLineNum - 1; i++) {
@@ -327,8 +336,22 @@ void BookImgPreProcessor::run() {
 	//Mat gray;
 	cvtColor(srcImg, grayImg, COLOR_RGB2GRAY);
 
+	//test
+	Mat equalized;
+	equalizeHist( grayImg, equalized);
+
+	addWeighted(grayImg, 0.2, equalized, 0.8, 0, grayImg);
+
+	GaussianBlur(grayImg, grayImg, Size(3, 3), 1);
+
+	Mat blured;
+	bilateralFilter(grayImg, blured, -1, 10, 5);
+	blured.copyTo(grayImg);
+
 	// 엣지 검출(Canny 엣지 검출기)
 	Canny(grayImg, edgeImg, 50, 150);
+
+	//morphologyEx(edgeImg, edgeImg, MORPH_CLOSE, Mat());
 
 	//짧은 엣지 제거
 	removeShortEdges(200);

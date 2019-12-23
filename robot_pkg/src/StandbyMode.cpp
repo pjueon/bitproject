@@ -15,7 +15,7 @@ StandbyMode::~StandbyMode() {}
 
 //----------------
 void StandbyMode::init(){
-	logger->DebugMsg("init() called");
+	logger->DebugMsg("init() called"); 
 }
 
 //----------------
@@ -28,7 +28,7 @@ void StandbyMode::test(){
 mode StandbyMode::run() { 
 	logger->DebugMsg("run() start!");
 	logger->DebugMsg("please wait...");
-	sleep(5*1000);
+	sleep(2*1000);
 	return mode::AutoDrive;  
 }
 //======================================================================

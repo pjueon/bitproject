@@ -21,6 +21,7 @@
 using namespace std;
 
 constexpr double PI = 3.141592;
+constexpr auto logFileName = "/home/jetbot/catkin_ws/src/bitproject/log/log.txt"; 
 
 /////////////////////////////////////////////////////////////////////////////
 //public
@@ -30,7 +31,7 @@ MainMachine::MainMachine(ros::NodeHandle& n)
  	  n(n), motorPub(n.advertise<std_msgs::String>("/motor", 1)),
 	  cameraTogglePub(n.advertise<std_msgs::Bool>("/camera_toggle", 1)),
 	  bookResultPub(n.advertise<std_msgs::String>("/book_cpp", 1)),
-	  x(0.0), y(0.0), yaw(0.0), destIdx(0)
+	  x(0.0), y(0.0), yaw(0.0), destIdx(0), logFileOut(logFileName)
 {
 	try {
 		Operation[mode::Standby] = new StandbyMode(this);
@@ -242,6 +243,7 @@ void MainMachine::move(const string& cmd) const {
 
 
 void MainMachine::changeMode(mode nextMode){
+	logger->DebugMsg("changeMode() called");
 	if(nextMode != mode::Quit) Operation[nextMode]->init();
 	currentMode = nextMode;
 }

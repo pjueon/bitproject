@@ -18,11 +18,16 @@ int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "robot_node");
 	ros::NodeHandle n;
-	
 	MainMachine mainMachine(n);
 
-	mainMachine.StartMainLoop();
-	//mainMachine.test();
+	try{
+		//mainMachine.StartMainLoop();
+		mainMachine.test();
+	}
+	catch(exception& e){
+		mainMachine.stop();
+		cerr << "exception!! :" << e.what() << endl;
+	}
 	
 	cout << "program end!" << endl;
 

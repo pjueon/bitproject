@@ -36,58 +36,47 @@ void ImageProcessMode::init(){
 void ImageProcessMode::test(){
 
 	logger->DebugMsg("This is a test code.");
-
-	constexpr auto testFilename = "/home/jetbot/catkin_ws/src/bitproject/test_imgs/bookshelfTest.jpg";
-	Mat bookshelfImg = imread(testFilename);
-
-	if (bookshelfImg.empty()) {
-		cerr << "Image load failed: " << testFilename << endl;
-		return ;
-	}
-
-
-	pre_processor->setImg(bookshelfImg);
-	pre_processor->run();
-
-	auto bookImgs = pre_processor->getBookImgs();
-	vector<string> bookNames;
-	bookNames.reserve(bookImgs.size());
-
-	logger->DebugMsg("num of books in the bookshelf photo: ", bookImgs.size());
-
-	// result !!!!
-	for(const auto& img: bookImgs){
-		bookNames.emplace_back(db->search(img));
-	}
-	// result !!!!
-
-
-	// DEBUG
-	stringstream ss;
-	//ss << "Books in bookshelf " << mainMachine->getBookshelfID() << ": "<< endl;
-	ss << "Books in bookshelf " << endl;
-	for(const auto& bookName : bookNames){
-		ss << bookName << endl;
-	}
-	//test
-	logger->DebugMsg(ss.str());
-
-
-	//save imgs (for debug)
-	logger->DebugMsg("Saving Files for debuging...");
-	//string filename = "bookshelf" + to_string(mainMachine->getBookshelfID()) + ".jpg";
-	string filename = "bookshelf" + to_string(mainMachine->getBookshelfID()) + ".jpg";
-
-
 	const string path = "/home/jetbot/catkin_ws/src/bitproject/test_imgs/";
-	//logger->DebugMsg("file name: ", filename);
-	//logger->DebugMsg("Path: ", path);
 
-	imwrite(path + filename, bookshelfImg);
-	pre_processor->saveBookCovers(path + filename);
-	pre_processor->saveResult(path + filename);
+	for(int i=0; i < 2; i++){
+		string filename = "bookshelf" + to_string(i);
+		Mat bookshelfImg = imread(path + filename + ".jpg");
 
-	pre_processor->showResult();
+		if (bookshelfImg.empty()) {
+			logger->DebugMsg("Image load failed: ", filename);
+			return ;
+		}
+
+		pre_processor->setImg(bookshelfImg);
+		pre_processor->run();
+
+		auto bookImgs = pre_processor->getBookImgs();
+		vector<string> bookNames;
+		bookNames.reserve(bookImgs.size());
+
+		logger->DebugMsg("num of books in the bookshelf photo: ", bookImgs.size());
+
+		// result !!!!
+		for(const auto& img: bookImgs){
+			bookNames.emplace_back(db->search(img));
+		}
+		// result !!!!
+
+			// DEBUG
+		stringstream ss;
+		//ss << "Books in bookshelf " << mainMachine->getBookshelfID() << ": "<< endl;
+		ss << "Books in bookshelf " << endl;
+		for(const auto& bookName : bookNames){
+			ss << bookName << endl;
+		}
+		//test
+		logger->DebugMsg(ss.str());
+		
+		pre_processor->saveBookCovers(path + filename);
+		pre_processor->saveResult(path + filename);
+
+		pre_processor->showResult();
+	}
 
 	logger->DebugMsg("Done!!(Just Test)");
 
@@ -100,19 +89,44 @@ mode ImageProcessMode::run() {
 	//sleep(3*1000);
 
 	auto bookshelfImg = mainMachine->getBookshelfImg();
+
+
 	pre_processor->setImg(bookshelfImg);
 	pre_processor->run();
 
 	auto bookImgs = pre_processor->getBookImgs();
+	logger->DebugMsg("got bookImgs, size: ", bookImgs.size());
+
+	string filename = "bookshelf" + to_string(mainMachine->getBookshelfID());
+	const string path = "/home/jetbot/catkin_ws/src/bitproject/test_imgs/";
+
+	pre_processor->saveBookCovers(path + filename);
+	pre_processor->saveResult(path + filename);
+
+	logger->DebugMsg("saved preprocessed results");
+
+
+	//save imgs (for debug)
+	logger->DebugMsg("Saving Files for debuging...");
+
+	imwrite(path + filename + ".jpg", bookshelfImg);
+
+	
+	logger->DebugMsg("Saving Images Done!");
+
 	vector<string> bookNames;
 	bookNames.reserve(bookImgs.size());
 
-	// result !!!!
-	for(const auto& img: bookImgs){
-		bookNames.emplace_back(db->search(img));
+	try{
+		// result !!!!
+		for(const auto& img: bookImgs){
+			bookNames.emplace_back(db->search(img));
+		}
+		// result !!!!
 	}
-	// result !!!!
-
+	catch(exception& e){
+		logger->DebugMsg("Exception: ", e.what());
+	}
 
 	// DEBUG
 	stringstream ss;
@@ -125,19 +139,6 @@ mode ImageProcessMode::run() {
 
 	logger->DebugMsg(result);
 	mainMachine->sendBookResult(result);
-
-
-	//save imgs (for debug)
-	logger->DebugMsg("Saving Files for debuging...");
-	string filename = "bookshelf" + to_string(mainMachine->getBookshelfID()) + ".jpg";
-
-	const string path = "/home/jetbot/catkin_ws/src/bitproject/test_imgs/";
-	//logger->DebugMsg("file name: ", filename);
-	//logger->DebugMsg("Path: ", path);
-
-	imwrite(path + filename, bookshelfImg);
-	pre_processor->saveBookCovers(path + filename);
-	pre_processor->saveResult(path + filename);
 
 	logger->DebugMsg("Done!!(Just Test)");
 

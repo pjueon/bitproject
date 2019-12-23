@@ -1,0 +1,30 @@
+[Debug] From: [MainMachine], Message: ===destinations===
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.8, 0.7, 3.1, 0
+[Debug] From: [MainMachine], Message: ===destinations===
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.82, 1.72, 3.1, 1
+[Debug] From: [MainMachine], Message: ===destinations===
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.1, 0.08, 0, -1
+[Debug] From: [MainMachine], Message: ==========
+[Debug] From: [MainMachine], Message: ===test start===
+[Debug] From: [ImageProcess], Message: This is a test code.
+[Debug] From: [ImageProcess], Message: num of books in the bookshelf photo: 7
+[Debug] From: [ImageProcess], Message: Books in bookshelf 
+프로그래머로 사는 법
+열혈 자료구조
+함수형 반응형 프로그래밍
+윈도우 모바일 애플리케이션 개발 가이드
+비트 프로젝트 110호
+모던 C++로 배우는 동시성 프로그래밍
+Microsoft SQL Server 2000
+
+[Debug] From: [ImageProcess], Message: num of books in the bookshelf photo: 6
+[Debug] From: [ImageProcess], Message: Books in bookshelf 
+ADSI
+TCP/IP 소켓 프로그래밍
+이것이 자바다 1
+리눅스 네트워크 프로그래밍
+이것이 자바다 1
+러닝! OpenCV 3
+
+[Debug] From: [ImageProcess], Message: Done!!(Just Test)
+[Debug] From: [MainMachine], Message: ===test end===

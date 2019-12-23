@@ -13,6 +13,6 @@ double L1Norm(const std::vector<double>& input);
 double L2Norm(const std::vector<float>& input);
 void MatTo1DVector(const cv::Mat& src, std::vector<unsigned char>& output);
 void MatTo2DVector(const cv::Mat& src, std::vector<std::vector<unsigned char>>& output);
-void resizeIfNecessary(const cv::Mat& input, cv::Mat& output);
+void resizeIfNecessary(const cv::Mat& input, cv::Mat& output, int minimumLength = 200, int maximumLength = 1500);
 
 #endif

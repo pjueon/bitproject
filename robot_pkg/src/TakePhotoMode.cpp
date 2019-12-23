@@ -437,6 +437,7 @@ Mat TakePhotoMode::getFrontLaserScan(double frontRange, double sideRange){
 //----------------
 cv::Mat TakePhotoMode::getPhoto() {
 	mainMachine->cameraOn();
+	sleep(1000);
 
 	auto cameraMsg = ros::topic::waitForMessage<sensor_msgs::CompressedImage>("/camera_topic", ros::Duration(10.0));
 

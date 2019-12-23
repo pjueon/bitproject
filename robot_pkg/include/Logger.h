@@ -4,6 +4,11 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+
+#include "MainMachine.h"
+
 using namespace std;
 
 class MainMachine;
@@ -16,14 +21,21 @@ public:
 
 	template<typename... T>
 	void DebugMsg(T&&... args) const {
-		//C++17, Folding Expression
-		cout << "[Debug] From: [" << moduleName << "], Message: ";
-		(cout << ... << args) << endl; 
+		stringstream ss;
 
+		//C++17, Folding Expression
+		ss << "[Debug] From: [" << moduleName << "], Message: ";
+		(ss << ... << args) << endl;
+		string msg = ss.str();
+		cout << msg; 
+		mainMachine->logFileOut << msg;
 	}
 
 private:
 	MainMachine* const mainMachine;
 	const string moduleName;
+	
+
+
 };
 #endif

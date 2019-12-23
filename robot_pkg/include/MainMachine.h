@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "ros/ros.h"
 #include "tf/transform_listener.h"
@@ -67,6 +68,7 @@ public:
 	cv::Mat getBookshelfImg();
 
 	void sendBookResult(const std::string&) const;
+	mutable std::ofstream logFileOut;
 
 private:
 	mode currentMode;

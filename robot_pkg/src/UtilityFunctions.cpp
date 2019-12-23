@@ -70,9 +70,9 @@ void MatTo2DVector(const Mat& src, vector<vector<unsigned char>>& output) {
 }
 
 //----------------------------------------------------------
-void resizeIfNecessary(const Mat& input, Mat& output) {
-	constexpr int minimumLength = 150; // px
-	constexpr int maximumLength = 1500; // px
+void resizeIfNecessary(const Mat& input, Mat& output, int minimumLength, int maximumLength) {
+	//constexpr int minimumLength = 200; // px
+	//constexpr int maximumLength = 1500; // px
 
 	const int img_width = input.cols;
 	const int img_height = input.rows;
@@ -93,6 +93,7 @@ void resizeIfNecessary(const Mat& input, Mat& output) {
 		resizingFactor = img_width <= img_height ? minimumLength / static_cast<double>(img_width) : minimumLength / static_cast<double>(img_height);
 	}
 	else {
+		input.copyTo(output);
 		return;
 	}
 	new_width = static_cast<int> (img_width * resizingFactor);
