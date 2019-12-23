@@ -73,17 +73,20 @@ class Worker(QThread):
             self.label = result['label'] + " " + str(round(self.confidence, 3))
             self.class_label = result['label']
             self.text = '{}: {:.0f}%'.format(self.class_label, self.confidence * 100)
+            
             if self.class_label == 'bookshelf' and (self.btm_y - self.top_y) * (self.btm_x - self.top_x) >= self.resize_width * self.resize_height * 0.2:
                 self.bound_flag = True
 
             if self.class_label == 'bookshelf':
                 self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255, 0, 0), 3)
-            elif self.class_label == 'desktop':
+                self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
+            elif self.class_label == 'desktop'and self.confidence >=0.8:
                 self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (0, 0, 255), 3)
+                self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
             else :
-                self.newImage = cv2.rectangle(self.newImage, (self.top_x, self.top_y), (self.btm_x, self.btm_y), (255, 255, 255), 3)
+                self.newImage = self.newImage
 
-            self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
+            #self.newImage = cv2.putText(self.newImage, self.label, (self.top_x, self.top_y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL , 0.8, (0, 230, 0), 1, cv2.LINE_AA)
 
         if self.bound_flag:
 
