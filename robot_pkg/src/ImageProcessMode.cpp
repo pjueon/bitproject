@@ -128,10 +128,10 @@ mode ImageProcessMode::run() {
 	}
 	logger->DebugMsg("bookNames.size(): ", bookNames.size());
 
-
-	// DEBUG
 	stringstream ss;
+	ss << "======================" << endl;
 	ss << "<Books in bookshelf " << mainMachine->getBookshelfID() << ">"<< endl;
+
 	for(const auto& bookName : bookNames){
 		ss << bookName << endl;
 	}
@@ -141,26 +141,36 @@ mode ImageProcessMode::run() {
 	
 	ifstream books_fin(bookInfoPath + filename);
 	if(books_fin.is_open()){
-		vector<string> books;
+		set<string> books;
 		string line; 
 		while(getline(books_fin, line)){
-			books.push_back(line);
+			books.insert(line);
 		}
 
-		vector<string> wrongBooks;
+		set<string> wrongBooks;
+		set<string> missingBooks(books);
 
-		int idx = 0;
-		for(; idx < books.size(); idx++){
-			if(idx >= bookNames.size()) break;
-			else if(books[idx] != bookNames[idx]) wrongBooks.push_back(bookNames[idx]);
+		for(const auto& bookName : bookNames){
+			if(auto itr = books.find(bookName); itr == books.end()) wrongBooks.insert(bookName);
+			else{
+				missingBooks.erase(bookName);
+			}
 		}
 
-		ss << endl << endl <<"wrong books: " << wrongBooks.size() << endl;
+		ss << endl <<"wrong books: " << wrongBooks.size() << endl;
 		
 		for(const auto& wrongBook: wrongBooks){
 			ss << wrongBook << endl;
 		}
 		ss << endl;
+
+		ss << "mising books: " << missingBooks.size() << endl;
+		for(const auto& missingBook: missingBooks){
+			ss << missingBook << endl;
+		}
+		ss << "======================"<<endl;
+
+	
 	}
 	else{
 		logger->DebugMsg("fail to open: ", bookInfoPath + filename);

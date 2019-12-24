@@ -77,7 +77,7 @@ mode TakePhotoMode::run() {
 	sleep(2000);
 
 	auto [bookshelf_x, bookshelf_y] = getBookshelfPos();
-	constexpr double R = 0.95;
+	constexpr double R = 1.00;
 	auto [new_x, new_y] = std::pair<double, double>{ bookshelf_x + R * cos(PI + correctYaw), bookshelf_y + R * sin(PI + correctYaw) };
 
 	logger->DebugMsg("new position : ", new_x, ", ", new_y, ", current position: ", mainMachine->getX(), ", ", mainMachine->getY());
@@ -97,7 +97,7 @@ mode TakePhotoMode::run() {
 
 	mainMachine->stop();
 	logger->DebugMsg("please wait...");	
-	sleep(9000);
+	sleep(10*1000);
 
 	auto boxinfo = getYOLOBoxInfo();
 	auto frame = getPhoto();

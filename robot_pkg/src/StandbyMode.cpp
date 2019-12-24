@@ -28,7 +28,7 @@ void StandbyMode::test(){
 mode StandbyMode::run() { 
 	logger->DebugMsg("run() start!");
 	logger->DebugMsg("please wait...");
-	sleep(2*1000);
+	sleep(100);
 	return mode::AutoDrive;  
 }
 //======================================================================
