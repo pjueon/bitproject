@@ -1,0 +1,14 @@
+<참고 문헌>
+
+D. Chen, S. Tsai, K.-H. Kim, C.-H. Hsu, J. P. Singh, and B. Girod. "Low-cost asset tracking using location-aware camera phones." Number 1, San Diego, California, USA, 2010. 
+
+Sam S. Tsai , David Chen , Huizhong Chen , Cheng-Hsin Hsu , Kyu-Han Kim , Jatinder P. Singh , Bernd Girod, "Combining image and text features: a hybrid approach to mobile book spine recognition", Proceedings of the 19th ACM international conference on Multimedia, November 28-December 01, 2011, Scottsdale, Arizona, USA
+
+D. Nister and H. Stewenius. "Scalable recognition with a vocabulary tree." In Proc. CVPR, 2006.
+
+Li Fei-Fei, Rob Fergues, Antonio Torralba, "Recognizing and Learning Object Categories", ICCV 2005.
+
+Grana C, Borghesani D, Manfredi M, Cucchiara R, "A fast approach for integrating ORB descriptors in the bag of words model." In: Proc. SPIE 8667, Multimedia Content and Mobile Devices. SPIE, Burlingame, California, USA, pp 866709-866709-8, 2013.
+
+E. Rublee, V. Rabaud, K. Konolige, G. Bradski, "ORB: An efficient alternative to SIFT or SURF", Proc. IEEE Int. Conf. Comput. Vision, pp. 2564-2571, Nov. 2011.
+
