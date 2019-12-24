@@ -83,8 +83,11 @@ class MainWindow(QMainWindow):
     @Slot()
     def auto_Start(self):
         try:
+            print(self.ui.listwidget.count())
             if(not self.ui.listwidget.count() == 0):
                 self.ui.listwidget.clear()
+
+            print(self.ui.listwidget.count())
             self.ui.statusbar.showMessage('Auto Drive Start')
             self.launch_select_pub.publish("auto_Start")
             self.th_book.start()

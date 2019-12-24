@@ -7,7 +7,7 @@ from std_msgs.msg import String
 def callback(data):
     name = unicode(data.data, 'euc-kr').encode('utf-8')
     pub.publish(name)
-    print(name)
+    #print(name)
 
 
 
