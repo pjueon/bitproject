@@ -9,6 +9,7 @@
 #include <string>
 #include <memory>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 using namespace cv;
@@ -85,8 +86,6 @@ void ImageProcessMode::test(){
 //======================================================================
 mode ImageProcessMode::run() { 
 	logger->DebugMsg("run() start!");
-	logger->DebugMsg("Doing Image Processing...(Just Test)");
-	//sleep(3*1000);
 
 	auto bookshelfImg = mainMachine->getBookshelfImg();
 
@@ -120,7 +119,8 @@ mode ImageProcessMode::run() {
 	// result !!!!
 	for(const auto& img: bookImgs){
 		try{
-			bookNames.emplace_back(db->search(img));		
+			auto bookName = db->search(img);
+			bookNames.emplace_back(std::move(bookName));		
 		}
 		catch(exception& e){
 			logger->DebugMsg("Exception: ", e.what());
@@ -131,20 +131,53 @@ mode ImageProcessMode::run() {
 
 	// DEBUG
 	stringstream ss;
-	ss << "Books in bookshelf " << mainMachine->getBookshelfID() << ": "<< endl;
+	ss << "<Books in bookshelf " << mainMachine->getBookshelfID() << ">"<< endl;
 	for(const auto& bookName : bookNames){
 		ss << bookName << endl;
 	}
+
+	const string bookInfoPath = "/home/jetbot/catkin_ws/src/bitproject/book_info/";
+	filename = "books" + to_string(mainMachine->getBookshelfID()) + ".txt";
+	
+	ifstream books_fin(bookInfoPath + filename);
+	if(books_fin.is_open()){
+		vector<string> books;
+		string line; 
+		while(getline(books_fin, line)){
+			books.push_back(line);
+		}
+
+		vector<string> wrongBooks;
+
+		int idx = 0;
+		for(; idx < books.size(); idx++){
+			if(idx >= bookNames.size()) break;
+			else if(books[idx] != bookNames[idx]) wrongBooks.push_back(bookNames[idx]);
+		}
+
+		ss << endl << endl <<"wrong books: " << wrongBooks.size() << endl;
+		
+		for(const auto& wrongBook: wrongBooks){
+			ss << wrongBook << endl;
+		}
+		ss << endl;
+	}
+	else{
+		logger->DebugMsg("fail to open: ", bookInfoPath + filename);
+	}
+
 	//test
 	auto result = ss.str();
 
 	logger->DebugMsg(result);
 	mainMachine->sendBookResult(result);
 
-	logger->DebugMsg("Done!!(Just Test)");
+	sleep(3*1000);
+	logger->DebugMsg("Done!!");
 
 	bool doesNextExist = mainMachine->nextDestination();
-	if(!doesNextExist) return mode::Quit;	
+	if(!doesNextExist) return mode::Quit;
+	
 	return mode::AutoDrive;  
 }
 //======================================================================
