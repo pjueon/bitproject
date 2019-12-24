@@ -13,7 +13,10 @@ class Book_search(QThread):
         self.sub = None
 
     def run(self):
+<<<<<<< HEAD
         self.sub = None
+=======
+>>>>>>> 9646f5732b11387761882e00dcd40f32a9d07251
         self.sub = rospy.Subscriber("/book_cpp_to_python", String, self.callback)
 
     def __del__(self):
