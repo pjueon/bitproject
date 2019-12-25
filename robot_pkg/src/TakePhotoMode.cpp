@@ -301,24 +301,29 @@ std::pair<double, double> TakePhotoMode::getBookshelfPos(){
 
 	//need to be fixed later	
 	vector<Point> points;
+	points.reserve(4);
 
-	auto pointMaker = [this](double x, double y, double r, double angle) {
-							auto [map_x, map_y] = XYConverter->toMapXY(x + r * cos(angle), y + r * sin(angle));
-							return Point(map_x, map_y);
-					  };
+	double prev_x = current_x, prev_y = current_y;
 
-	points.emplace_back(pointMaker(current_x, current_y, x_range/2, current_yaw + PI/2));
-	auto [tmp_x, tmp_y] = XYConverter->toRealXY(points[0].x, points[0].y);
+	vector<pair<double, double>> offsets = {
+											 {x_range/2, current_yaw + PI/2}, 
+											 {y_range, current_yaw},
+											 { x_range, current_yaw - PI/2},
+											 {y_range, current_yaw + PI}
+																			};
+	pair<double , double > nextXY;
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, y_range, current_yaw));
-	tie(tmp_x, tmp_y) = XYConverter->toRealXY(points[1].x, points[1].y);
+	for(const auto& p : offsets){
+		const auto& [r, angle] = p;
+		nextXY = make_pair( prev_x + r * cos(angle), prev_y + r * sin(angle));
+		const auto [map_x, map_y] = XYConverter->toMapXY(nextXY);
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, x_range, current_yaw - PI/2));
-	tie(tmp_x, tmp_y) = XYConverter->toRealXY(points[2].x, points[2].y);
+		points.emplace_back(map_x, map_y);
+		tie(prev_x, prev_y) = nextXY;
+	}
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, y_range, current_yaw + PI));
 
-	const Point* pts[1] = { &(points[0]) };
+	const Point* pts[1] = { &points.front() };
 	int npts[] = { 4 };
 	
 	fillPoly(mask, pts, npts, 1, Scalar(255));
