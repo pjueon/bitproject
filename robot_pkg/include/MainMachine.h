@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <memory>
+
 
 #include "ros/ros.h"
 #include "tf/transform_listener.h"
@@ -72,8 +74,9 @@ public:
 
 private:
 	mode currentMode;
-	std::unordered_map<mode, OperatingMode*> Operation;
-	Logger* const logger;
+	std::unordered_map<mode, std::unique_ptr<OperatingMode>> Operation;
+
+	const std::unique_ptr<Logger> logger;
 
 	tf::TransformListener TFlistener;
 	double x;

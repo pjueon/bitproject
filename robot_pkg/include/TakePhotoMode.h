@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <utility>
+#include <memory>
 
 
 #include <opencv2/opencv.hpp>
@@ -30,7 +31,7 @@ public:
 
 private: 
 	double initYaw;
-	CoordinateConverter* XYConverter;
+	const std::unique_ptr<CoordinateConverter> XYConverter;
 	cv::Mat getPhoto();
 	std::array<double, 4> getYOLOBoxInfo();
 	

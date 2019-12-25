@@ -1,3 +1,4 @@
+#include "Mode.h"
 #include "AutoDriveMode.h"
 #include "Logger.h"
 #include "UtilityFunctions.h"
@@ -8,6 +9,7 @@
 
 #include <vector>
 #include <utility>
+#include <memory>
 #include <cmath>
 #include <iostream>
 
@@ -21,12 +23,11 @@ constexpr bool BLOCKED = false;
 /////////////////////////////////////////////////////////////////////////////
 //public
 AutoDriveMode::AutoDriveMode(MainMachine* const mainMachine)
-	:OperatingMode(mainMachine, "AutoDrive"), currRouteIdx(0), pathFinder(new PathFinder())
+	:OperatingMode(mainMachine, "AutoDrive"), currRouteIdx(0), 
+	 pathFinder(make_unique<PathFinder>())
 {}
 
-AutoDriveMode::~AutoDriveMode() {
-	delete pathFinder;
-}
+AutoDriveMode::~AutoDriveMode() = default;
 
 //----------------
 void AutoDriveMode::init(){

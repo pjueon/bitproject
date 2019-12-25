@@ -14,6 +14,8 @@
 
 #include <vector>
 #include <array>
+#include <utility>
+#include <memory>
 #include <cmath>
 #include <iostream>
 #include <algorithm>
@@ -30,13 +32,12 @@ constexpr double PI = CV_PI;
 /////////////////////////////////////////////////////////////////////////////
 //public
 TakePhotoMode::TakePhotoMode(MainMachine* const mainMachine)
-	:OperatingMode(mainMachine, "TakePhoto"), initYaw(0.0), XYConverter(new CoordinateConverter(0.0, 0.0, 1.0))
+	:OperatingMode(mainMachine, "TakePhoto"), initYaw(0.0), 
+	 XYConverter(make_unique<CoordinateConverter>(0.0, 0.0, 1.0))
 {}
 
 //----------------
-TakePhotoMode::~TakePhotoMode() {
-	delete XYConverter;
-}
+TakePhotoMode::~TakePhotoMode() = default;
 
 
 //----------------

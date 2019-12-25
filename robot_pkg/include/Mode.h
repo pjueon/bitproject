@@ -3,8 +3,8 @@
 #define MODE_H
 
 #include <string>
+#include <memory>
 
-using namespace std;
 
 class MainMachine;
 class Logger;
@@ -16,7 +16,7 @@ enum class mode {
 
 class OperatingMode {  
 public:
-	OperatingMode(MainMachine* const, const string);
+	OperatingMode(MainMachine* const, const std::string);
 	virtual ~OperatingMode();
 	virtual mode run() = 0;
 	virtual void init() = 0;
@@ -24,10 +24,10 @@ public:
 
 protected:
 	MainMachine* const mainMachine;
-	const string modeName;
+	const std::string modeName;
 
 protected:
-	Logger* const logger;  
+	const std::unique_ptr<Logger> logger;   
 };
 
 #endif

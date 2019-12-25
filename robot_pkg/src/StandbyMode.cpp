@@ -10,7 +10,7 @@ StandbyMode::StandbyMode(MainMachine* const mainMachine)
 {}
 
 //----------------
-StandbyMode::~StandbyMode() {}
+StandbyMode::~StandbyMode() = default;
 
 
 //----------------

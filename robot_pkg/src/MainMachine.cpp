@@ -14,9 +14,12 @@
 
 #include <iostream>  
 #include <stdexcept>
-
+#include <memory>
 #include <fstream>
+#include <unordered_map>
 #include <string>
+#include <vector>
+
 
 using namespace std;
 
@@ -27,24 +30,23 @@ constexpr auto logFileName = "/home/jetbot/catkin_ws/src/bitproject/log/log.txt"
 //public
 MainMachine::MainMachine(ros::NodeHandle& n) 
 	: currentMode(mode::Standby), 
-	  logger(new Logger(this, "MainMachine")),
+	  logger(make_unique<Logger>(this, "MainMachine")),
  	  n(n), motorPub(n.advertise<std_msgs::String>("/motor", 1)),
 	  cameraTogglePub(n.advertise<std_msgs::Bool>("/camera_toggle", 1)),
 	  bookResultPub(n.advertise<std_msgs::String>("/book_cpp", 1)),
 	  x(0.0), y(0.0), yaw(0.0), destIdx(0), logFileOut(logFileName)
 {
 	try {
-		Operation[mode::Standby] = new StandbyMode(this);
-		Operation[mode::AutoDrive] = new AutoDriveMode(this);
-		Operation[mode::TakePhoto] = new TakePhotoMode(this);
-		Operation[mode::ImageProcess] = new ImageProcessMode(this);
+		Operation.reserve(4);
+		Operation.emplace(mode::Standby, make_unique<StandbyMode>(this));
+		Operation.emplace(mode::AutoDrive, make_unique<AutoDriveMode>(this));
+		Operation.emplace(mode::TakePhoto, make_unique<TakePhotoMode>(this));
+		Operation.emplace(mode::ImageProcess, make_unique<ImageProcessMode>(this));
 	}
 	catch (exception& e) { 
 		cout << e.what() << endl;
 		throw runtime_error("exception from MainMachine constructor"); 
 	}
-
-
 
 	constexpr auto filename = "/home/jetbot/catkin_ws/src/bitproject/robot_pkg/route_info/destinations.txt";
 	ifstream fin(filename);
@@ -86,10 +88,10 @@ MainMachine::MainMachine(ros::NodeHandle& n)
 
 MainMachine::~MainMachine() {
 	stop();
-	for (auto& ModePairs : Operation) { 
-		delete ModePairs.second;
-	}
-	delete logger;
+	// for (auto& ModePairs : Operation) { 
+	// 	delete ModePairs.second;
+	// }
+	//delete logger;
 }
 
 //============================================================================
