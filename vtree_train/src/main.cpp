@@ -1,5 +1,4 @@
 #include "VocabularyTree.h"
-#include "ImageDB.h"
 #include "opencv2/opencv.hpp"
 
 #include <vector>
@@ -20,7 +19,7 @@ int main() {
 		vector<string> bookNames;
 		vector<Mat> bookImgs;
 
-		ifstream fin("booknames.txt");
+		ifstream fin("/home/jetbot/catkin_ws/src/bitproject/ImageDB/train for demo/booknames.txt");
 		if (!fin.is_open()) {
 			cerr << "fail to open " << "booknames.txt" << endl;
 			return 1;
@@ -35,10 +34,10 @@ int main() {
 
 		//========== 임시 ==========
 		{
-			string prefix = "img/train/data";
-			for (int i = 0; i < 61; i++) {
+			string prefix = "/home/jetbot/catkin_ws/src/bitproject/ImageDB/train for demo/data";
+			for (int i = 0; i < 12; i++) {
 				stringstream ss;
-				ss << prefix << setw(4) << setfill('0') << i << ".jpg";
+				ss << prefix << setw(3) << setfill('0') << i << ".jpg";
 				string filename = ss.str();
 				Mat img = imread(filename, IMREAD_GRAYSCALE);
 				bookImgs.push_back(img);
@@ -61,7 +60,7 @@ int main() {
 
 		chrono::system_clock::time_point set_end = std::chrono::system_clock::now();
 		chrono::duration<double> setting_time = set_end - set_start;
-		cerr << "데이터 set 완료, 걸린 시간: " << setting_time.count() << endl;
+		//cerr << "데이터 set 완료, 걸린 시간: " << setting_time.count() << endl;
 
 		// fitting 시작
 		cerr << "fitting 시작" << endl;
@@ -69,11 +68,11 @@ int main() {
 		VTree.fit();
 		chrono::system_clock::time_point fit_end = std::chrono::system_clock::now();
 		chrono::duration<double> fitting_time = fit_end - fit_start;
-		cerr << "fitting 완료, 걸린 시간: " << fitting_time.count() << "초" << endl;
+		//cerr << "fitting 완료, 걸린 시간: " << fitting_time.count() << "초" << endl;
 				
 		// 모델 저장
-		VTree.saveToFile();
-		cout << "fitting된 모델 저장완료" << endl;
+		VTree.saveToFile("/home/jetbot/catkin_ws/src/bitproject/ImageDB/imgdb_demo.vtree");
+		cout << "fitting complete" << endl;
 
 	}
 	catch (exception & e) {
