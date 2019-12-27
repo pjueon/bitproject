@@ -11,17 +11,17 @@ class create_map(QMainWindow, QWidget):
         if event.type() == QEvent.KeyPress:
 
             #print("press")
-            if(event.key() == 68 and event.key() == 87):
-                self.create_pub.publish("FR")
-            elif(event.key() == 65 and event.key() == 87):
-                self.create_pub.publish("FL")
-            elif(event.key() == 87):
+            #if(event.key() == 68 and event.key() == 87):
+            #    self.create_pub.publish("FR")
+            #elif(event.key() == 65 and event.key() == 87):
+            #    self.create_pub.publish("FL")
+            if(event.key() == 87):# 87 W
                 self.create_pub.publish("F")
-            elif(event.key() == 68):
+            elif(event.key() == 68): # 68 D
                 self.create_pub.publish("R")
-            elif(event.key() == 65):
+            elif(event.key() == 65): # 65 A
                 self.create_pub.publish("L")
-            elif(event.key() == 83):
+            elif(event.key() == 83): # 83 S
                 self.create_pub.publish("B")
         if event.type() == QEvent.KeyRelease:
             #print("release")
