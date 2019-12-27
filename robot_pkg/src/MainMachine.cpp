@@ -106,7 +106,7 @@ void MainMachine::StartMainLoop() {
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
 
-	Operation[mode::ImageProcess]->test();
+	Operation[mode::TakePhoto]->test();
 	
 	logger->DebugMsg("===test end===");
 }

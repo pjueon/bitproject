@@ -54,6 +54,7 @@ void TakePhotoMode::setInitYaw(double angle){
 //----------------
 void TakePhotoMode::test(){
 	logger->DebugMsg("This is a test code.");
+	getBookshelfPos();
 }  
 
 
@@ -336,6 +337,15 @@ std::pair<double, double> TakePhotoMode::getBookshelfPos(){
 	Mat maskedMap = mask & map;
 	Mat labels, stats, centroids;
 
+/*
+	//DEBUG
+	imshow("mask", mask);
+	imshow("maskedMap", maskedMap);
+
+	waitKey();
+	destroyAllWindows();
+	//DEBUG
+*/
 	int cnt = connectedComponentsWithStats(maskedMap, labels, stats, centroids);
 
 	if(cnt <= 1) {
@@ -413,8 +423,6 @@ Mat TakePhotoMode::getFrontLaserScan(double frontRange, double sideRange){
 
 	int x_offset = 0;
 	int y_offset = scanRange_y/2;
-
-
 
 	Mat laserScanMap(Mat::zeros(Size(scanRange_x,scanRange_y), CV_8UC1));
 

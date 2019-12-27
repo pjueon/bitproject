@@ -1,7 +1,7 @@
 [Debug] From: [MainMachine], Message: ===destinations===
-[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.8, 0.65, 3.1, 0
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.8, 0.83, 3.1, 0
 [Debug] From: [MainMachine], Message: ===destinations===
-[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.82, 1.73, 3.1, 1
+[Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.82, 1.78, 3.1, 1
 [Debug] From: [MainMachine], Message: ===destinations===
 [Debug] From: [MainMachine], Message: x,y,yaw,bookshelfID: 0.1, 0.08, 0, -1
 [Debug] From: [MainMachine], Message: ==========
@@ -18,35 +18,35 @@
 [Debug] From: [TakePhoto], Message: initYaw:3.1
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.13179
+[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.14026
 [Debug] From: [TakePhoto], Message: angleTune() start!
 [Debug] From: [TakePhoto], Message: angleTune() end!
-[Debug] From: [TakePhoto], Message: correctYaw : -3.09889
+[Debug] From: [TakePhoto], Message: correctYaw : 3.13612
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: After angleTune, current yaw : -3.11059
+[Debug] From: [TakePhoto], Message: After angleTune, current yaw : 3.13569
 [Debug] From: [TakePhoto], Message: 
 
 ============
 getBookshelfPos() start!
 [Debug] From: [TakePhoto], Message: Map Data loaded
-[Debug] From: [TakePhoto], Message: Bookshelf position : 0.319695, 0.605849, current position: 0.786799, 0.651366
-[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.469317
+[Debug] From: [TakePhoto], Message: Bookshelf position : 0.388442, 0.892839, current position: 0.786785, 0.858549
+[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.399817
 [Debug] From: [TakePhoto], Message: getBookshelfPos() end!
 ============
 
-[Debug] From: [TakePhoto], Message: new position : 1.31878, 0.64854, current position: 0.786799, 0.651366
+[Debug] From: [TakePhoto], Message: new position : 1.38843, 0.887369, current position: 0.786785, 0.858549
 [Debug] From: [TakePhoto], Message: moveBackTo() start!
 [Debug] From: [TakePhoto], Message: moveBackTo() end!
-[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.24959, 0.673085
+[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.3621, 0.854401
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: final yaw : 3.09912
+[Debug] From: [TakePhoto], Message: final yaw : 3.05962
 [Debug] From: [TakePhoto], Message: please wait...
 [Debug] From: [TakePhoto], Message: getYOLOBoxInfo() called!
 [Debug] From: [MainMachine], Message: camera on called!!!
 [Debug] From: [TakePhoto], Message: image size: 1920 * 1080
-[Debug] From: [TakePhoto], Message: boxinfo: 0.194832, 0.05106, 0.772358, 1
+[Debug] From: [TakePhoto], Message: boxinfo: 0.066742, 0.07234, 0.592808, 1
 [Debug] From: [TakePhoto], Message: 
 
 ============
@@ -66,15 +66,15 @@ Took a Photo!!!!!!
 Microsoft SQL Server 2000
 윈도우 모바일 애플리케이션 개발 가이드
 OpenCV4로 배우는 컴퓨터 비전과 머신 러닝
-Clean Architecture
+모던 웹을 위한 Node.js 프로그래밍
 비트 프로젝트 110호
 머신러닝 교과서
 
 wrong books: 1
-Clean Architecture
+모던 웹을 위한 Node.js 프로그래밍
 
 mising books: 1
-모던 웹을 위한 Node.js 프로그래밍
+Clean Architecture
 ======================
 
 [Debug] From: [MainMachine], Message: =================
@@ -92,35 +92,35 @@ sendBookResult() called
 [Debug] From: [TakePhoto], Message: initYaw:3.1
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.03878
+[Debug] From: [TakePhoto], Message: After initial angle setting, current yaw: -3.05335
 [Debug] From: [TakePhoto], Message: angleTune() start!
 [Debug] From: [TakePhoto], Message: angleTune() end!
-[Debug] From: [TakePhoto], Message: correctYaw : -3.06787
+[Debug] From: [TakePhoto], Message: correctYaw : -3.05255
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: After angleTune, current yaw : -3.04327
+[Debug] From: [TakePhoto], Message: After angleTune, current yaw : -3.04657
 [Debug] From: [TakePhoto], Message: 
 
 ============
 getBookshelfPos() start!
 [Debug] From: [TakePhoto], Message: Map Data loaded
-[Debug] From: [TakePhoto], Message: Bookshelf position : 0.370799, 1.85168, current position: 0.789244, 1.76792
-[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.426747
+[Debug] From: [TakePhoto], Message: Bookshelf position : 0.388442, 1.94035, current position: 0.80836, 1.74736
+[Debug] From: [TakePhoto], Message: Distance to Bookshelf : 0.462145
 [Debug] From: [TakePhoto], Message: getBookshelfPos() end!
 ============
 
-[Debug] From: [TakePhoto], Message: new position : 1.36808, 1.92534, current position: 0.789244, 1.76792
+[Debug] From: [TakePhoto], Message: new position : 1.38448, 2.02928, current position: 0.80836, 1.74736
 [Debug] From: [TakePhoto], Message: moveBackTo() start!
 [Debug] From: [TakePhoto], Message: moveBackTo() end!
-[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.3415, 1.9173
+[Debug] From: [TakePhoto], Message: After positionTune, current x, y: 1.33213, 1.9901
 [Debug] From: [TakePhoto], Message: rotateTo() start!
 [Debug] From: [TakePhoto], Message: rotateTo() end!
-[Debug] From: [TakePhoto], Message: final yaw : 3.04628
+[Debug] From: [TakePhoto], Message: final yaw : -3.08774
 [Debug] From: [TakePhoto], Message: please wait...
 [Debug] From: [TakePhoto], Message: getYOLOBoxInfo() called!
 [Debug] From: [MainMachine], Message: camera on called!!!
 [Debug] From: [TakePhoto], Message: image size: 1920 * 1080
-[Debug] From: [TakePhoto], Message: boxinfo: 0.048762, 0.040428, 0.662248, 1
+[Debug] From: [TakePhoto], Message: boxinfo: 0, 0.057024, 0.5809, 1
 [Debug] From: [TakePhoto], Message: 
 
 ============
@@ -134,22 +134,21 @@ Took a Photo!!!!!!
 [Debug] From: [ImageProcess], Message: saved preprocessed results
 [Debug] From: [ImageProcess], Message: Saving Files for debuging...
 [Debug] From: [ImageProcess], Message: Saving Images Done!
-[Debug] From: [ImageProcess], Message: Exception: There is no Keypoint in the image.
-[Debug] From: [ImageProcess], Message: bookNames.size(): 5
+[Debug] From: [ImageProcess], Message: bookNames.size(): 6
 [Debug] From: [ImageProcess], Message: ======================
 <Books in bookshelf 1>
-러닝! OpenCV 3
-리눅스 시스템 프로그래밍
 C++17 STL 프로그래밍
-모던 웹을 위한 Node.js 프로그래밍
+Clean Architecture
 모던 웹을 위한 JavaScript + jQuery 입문
+리눅스 시스템 프로그래밍
+파워 오브 데이터베이스
+러닝! OpenCV 3
 
 wrong books: 1
-모던 웹을 위한 Node.js 프로그래밍
-
-mising books: 2
 Clean Architecture
-이것이 자바다 1
+
+mising books: 1
+모던 웹을 위한 Node.js 프로그래밍
 ======================
 
 [Debug] From: [MainMachine], Message: =================

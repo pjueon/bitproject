@@ -4,9 +4,9 @@ OpenCV4로 배우는 컴퓨터 비전과 머신 러닝
 Clean Architecture
 비트 프로젝트 110호
 머신러닝 교과서
+러닝! OpenCV 3
+리눅스 시스템 프로그래밍
+이것이 자바다 1
 C++17 STL 프로그래밍
 모던 웹을 위한 Node.js 프로그래밍
 모던 웹을 위한 JavaScript + jQuery 입문
-리눅스 시스템 프로그래밍
-파워 오브 데이터베이스
-러닝! OpenCV 3
