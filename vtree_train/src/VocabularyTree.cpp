@@ -6,12 +6,15 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <unordered_map>
 #include <set>
 #include <cmath>
 #include <iterator>
 #include <numeric> 
 #include <bitset>
+#include <sstream>
 #include <fstream>
+#include <memory>
 #include "opencv2/opencv.hpp"
 
 #include <chrono>
@@ -21,24 +24,18 @@ using namespace cv;
 
 
 // KMajority ==========================================================================
-VocabularyTree::KMajority::KMajority(size_t _K, int _currLevel, VocabularyTree* _Master, size_t _DATA_DIMENSION)
+VocabularyTree::KMajority::KMajority(size_t _K, int _currLevel, VocabularyTree& _Master, size_t _DATA_DIMENSION)
 	: K(_K), DATA_DIMENSION(_DATA_DIMENSION),
 	currLevel(_currLevel),
 	centers(K, std::vector<uchar>(DATA_DIMENSION, 0)),
 	groupCnt(K, 0),
-	parent(nullptr), children(K, nullptr), master(_Master),
+	parent(nullptr), children(K), master(_Master),
 	dataIdxs(K),
 	leafNodeID(-1),
 	fittedNodeID(0)
 {}
 
-
-VocabularyTree::KMajority::~KMajority() {
-	for (auto& child : children) {
-		delete child;
-	}
-}
-
+VocabularyTree::KMajority::~KMajority() = default;
 
 void VocabularyTree::KMajority::setDatas(const std::set<int>& _dataIdxs, const std::vector<int>& _featureCntInFile) {
 	totalDataIdxs = _dataIdxs;
@@ -47,18 +44,7 @@ void VocabularyTree::KMajority::setDatas(const std::set<int>& _dataIdxs, const s
 	// 그룹 초기화 (모두 그룹 0)
 	dataIdxs.assign(K, set<int>());
 	dataIdxs[0] = _dataIdxs;
-	group.assign(master->datas.size(), 0);
-
-}
-
-
-unsigned int VocabularyTree::KMajority:: getDistance(const std::vector<uchar>& data1, const std::vector<uchar>& data2) const {
-	//Hamming distance
-	unsigned int ret = 0;
-	for (int i = 0; i < DATA_DIMENSION; i++) {
-		ret += static_cast<unsigned int>(bitset<8>(data1[i] ^ data2[i]).count());
-	}
-	return ret;
+	group.assign(master.datas.size(), 0);
 
 }
 
@@ -66,7 +52,7 @@ void VocabularyTree::KMajority::initCenters() {
 	// 처음 K 개 데이터로 중심점 초기화
 	auto itr = totalDataIdxs.begin();
 	for (int i = 0; i < K; i++) {
-		centers[i] = master->datas[*itr].value; // 처음 K 개 데이터로 중심점 초기화
+		centers[i] = master.datas[*itr].value; // 처음 K 개 데이터로 중심점 초기화
 		itr++;
 	}
 }
@@ -76,13 +62,13 @@ void VocabularyTree::KMajority::fit() {
 	// fit 정지조건
 	constexpr uchar epsilon = 0;
 	
-	fittedNodeID = master->fittedNodesCnt;
+	fittedNodeID = master.fittedNodesCnt;
 	// 재귀 종료 조건
-	if (totalDataIdxs.size() < K || currLevel >= master->L) {
+	if (totalDataIdxs.size() < K || currLevel >= master.L) {
 		// leafnode에 추가
-		master->addLeafNode(this);
-		master->fittedNodesCnt++;
-		master->showFittingProgress();
+		master.addLeafNode(this);
+		master.fittedNodesCnt++;
+		master.showFittingProgress();
 		return;
 	}
 
@@ -90,16 +76,13 @@ void VocabularyTree::KMajority::fit() {
 
 	// initializing
 	initCenters();
-	vector<vector<int>> fileNameCounterPerGroup(K, vector<int>(master->files.size(), 0));
+	vector<vector<int>> fileNameCounterPerGroup(K, vector<int>(master.bookNames.size(), 0));
 	fileNameCounterPerGroup[0] = featureCntInFile;
 
-
-
-
 	// data 번호, k번호
-	map<int, vector<unsigned int>> distances;
+	map<int, vector<size_t>> distances;
 	for (int idx : totalDataIdxs) {
-		distances[idx] = std::vector<unsigned int>(K, 0);
+		distances[idx] = std::vector<size_t>(K, 0);
 	}
 
 	vector<vector<uchar>> old_centers(centers);
@@ -108,7 +91,7 @@ void VocabularyTree::KMajority::fit() {
 		// 중심에서 각 데이터까지 거리 구하기
 		for (int idx : totalDataIdxs) {
 			for (int k = 0; k < K; k++) {
-				distances[idx][k] = getDistance(centers[k], master->datas[idx].value);
+				distances[idx][k] = hammigDistance(centers[k], master.datas[idx].value);
 			}
 			// i번째 데이터에 가장 가까운 중심의 번호를 찾기
 			int new_k = static_cast<int>(min_element(distances[idx].begin(), distances[idx].end()) - distances[idx].begin());
@@ -118,8 +101,8 @@ void VocabularyTree::KMajority::fit() {
 			if (old_k != new_k) {
 				group[idx] = new_k;
 
-				const string filename = master->datas[idx].filename;
-				int fileIdx = master->filenameVSIdx.at(filename);
+				const string filename = master.datas[idx].filename;
+				int fileIdx = master.bookNameVSIdx.at(filename);
 
 				// 이전 그룹에서 제거
 				dataIdxs[old_k].erase(idx);
@@ -144,7 +127,7 @@ void VocabularyTree::KMajority::fit() {
 
 		for (int idx : totalDataIdxs) {
 			for (int j = 0; j < DATA_DIMENSION; j++) {
-				bitset<8> DataByte = master->datas[idx].value[j];
+				bitset<8> DataByte = master.datas[idx].value[j];
 				for (int bit = 0; bit < 8; bit++) {
 					if (DataByte[bit]) center_bit_counters[group[idx]][j * 8 + bit]++;
 				}
@@ -166,7 +149,7 @@ void VocabularyTree::KMajority::fit() {
 
 		bool Done = true;
 		for (int k = 0; k < K; k++) {
-			if (getDistance(old_centers[k], centers[k]) > epsilon) { 
+			if (hammigDistance(old_centers[k], centers[k]) > epsilon) {
 				Done = false;
 				break;
 			}
@@ -182,13 +165,10 @@ void VocabularyTree::KMajority::fit() {
 		else {
 			old_centers = centers;
 		}
-
 	}
 
-
-	master->fittedNodesCnt++;
-	master->showFittingProgress();
-
+	master.fittedNodesCnt++;
+	master.showFittingProgress();
 
 	// 자식들 fit
 	for (int k = 0; k < K; k++) {
@@ -200,23 +180,14 @@ void VocabularyTree::KMajority::fit() {
 }
 
 
-
 void VocabularyTree::KMajority::addChildren() {
-	if (master == nullptr)
-		throw logic_error("master is nullptr!");
-
 	for (int k = 0; k < K; k++) {
 		auto& child = children[k];
 
-		if (child != nullptr) 
-			delete child;
-
-		child = new KMajority(K, currLevel + 1, master, DATA_DIMENSION);
+		child = make_unique<KMajority>(K, currLevel + 1, master, DATA_DIMENSION);	
 		child->parent = this;
-
 	}
 };
-
 
 
 bool VocabularyTree::KMajority::isLeafNode() const {
@@ -225,29 +196,29 @@ bool VocabularyTree::KMajority::isLeafNode() const {
 
 void VocabularyTree::KMajority::toBuff() const {
 	//center info
-	master->centersBuff << fittedNodeID << endl;
+	master.centersBuff << fittedNodeID << endl;
 	for (int k = 0; k < K; k++) {
 		for (int d = 0; d < DATA_DIMENSION; d++) {
-			master->centersBuff << static_cast<int>(centers[k][d]);
-			master->centersBuff << "|";
+			master.centersBuff << static_cast<int>(centers[k][d]);
+			master.centersBuff << "|";
 		}
-		master->centersBuff << endl;
+		master.centersBuff << endl;
 	}
 	
 
 	// tree structure
-	master->treeSaveBuff << fittedNodeID << "(";
+	master.treeSaveBuff << fittedNodeID << "(";
 		
 	if (isLeafNode()) {// 재귀 종료 조건
-		master->treeSaveBuff << ")";
+		master.treeSaveBuff << ")";
 	}
 	else {
 		for (int k = 0; k < K; k++) {
 			// 재귀 호출
 			children[k]->toBuff();
-			if(k != K-1) master->treeSaveBuff << ",";
+			if(k != K-1) master.treeSaveBuff << ",";
 		}
-		master->treeSaveBuff << ")";
+		master.treeSaveBuff << ")";
 	}
 }
 
@@ -256,30 +227,29 @@ void VocabularyTree::KMajority::toBuff() const {
 
 VocabularyTree::VocabularyTree(size_t _K, int _L, size_t _DATA_DIMENSION)
 	: K(_K), L(_L), DATA_DIMENSION(_DATA_DIMENSION),
-	  root_node(new KMajority(K, 0, this, DATA_DIMENSION)),
+	  root_node(make_unique<KMajority>(K, 0, *this, DATA_DIMENSION)),
 	  fittedNodesCnt(0),
 	  maxTotalNodes(K!=1? static_cast<size_t>((pow(K, L+1)-1)/(K-1)) : L),
 	  treeSaveBuff()
 {}
 
-VocabularyTree::~VocabularyTree() {
-	delete root_node;
-}
+VocabularyTree::~VocabularyTree() = default;
 
 void  VocabularyTree::setBookImgs(const std::vector<cv::Mat>& bookImgs, const std::vector<std::string>& bookNames) {
 	if (bookImgs.size() != bookNames.size()) throw("[setBookImgs] bookImgs.size() != bookNames.size()");
 
-	this->files = bookNames;
+	this->bookNames = bookNames;
 	vector<Data> datas;
 
-	for (int idx = 0; idx < this->files.size(); idx++) {
-		filenameVSIdx[this->files[idx]] = idx;
+	bookNameVSIdx.reserve(this->bookNames.size());
+	for (int idx = 0; idx < this->bookNames.size(); idx++) {
+		bookNameVSIdx[this->bookNames[idx]] = idx;
 	}
 
 	// 이미지 파일들 불러와서 특징점 추출후 vector<Data>에 추가
-	for (int i = 0; i < this->files.size(); i++) {
+	for (int i = 0; i < this->bookNames.size(); i++) {
 		if (bookImgs[i].empty()) {
-			cerr << "Image is empty!: " << this->files[i] << endl;
+			cerr << "Image is empty!: " << this->bookNames[i] << endl;
 			throw runtime_error("[exception] Image load failed");
 		}
 
@@ -300,12 +270,11 @@ void  VocabularyTree::setBookImgs(const std::vector<cv::Mat>& bookImgs, const st
 		vector<vector<uchar>> desc;
 		MatTo2DVector(Matdesc, desc);
 
-		//
-		if (desc.size() == 0) throw runtime_error(this->files[i] + ", [setBookImgs] couldn't detect any key points");
+		if (desc.size() == 0) throw runtime_error(this->bookNames[i] + ", [setBookImgs] couldn't detect any key points");
 
 		// datas에 추가
 		for (const auto& v : desc) {
-			datas.emplace_back(v, files[i], int(v.size()));
+			datas.emplace_back(v, this->bookNames[i], int(v.size()));
 		}
 	}
 
@@ -321,11 +290,11 @@ void VocabularyTree::setDatas(const vector<Data>& datas) {
 	set<int> dataIdxs;
 
 
-	vector<int> featureCntInFile(files.size(), 0);
+	vector<int> featureCntInFile(bookNames.size(), 0);
 	for (int i = 0; i < data_size; i++) {
 		dataIdxs.insert(i);
 		const string filename = datas[i].filename;
-		int fileIdx = filenameVSIdx.at(filename);
+		int fileIdx = bookNameVSIdx.at(filename);
 
 		featureCntInFile[fileIdx] += 1;
 	}
@@ -375,7 +344,7 @@ void VocabularyTree::updateWeights() {
 	const size_t leafNodesSize = leafNodes.size();
 	weights.assign(leafNodesSize, 0);
 
-	const int N = static_cast<int>(files.size());
+	const int N = static_cast<int>(bookNames.size());
 
 	for (int i = 0; i < leafNodesSize; i++) {
 		weights[i] = log(N / leafNodeCnt[i]);
@@ -386,9 +355,9 @@ void VocabularyTree::updateWeights() {
 void VocabularyTree::updateDatabaseImgVector() {
 
 	const size_t leafNodesSize = leafNodes.size();
-	databaseImgVector.assign(files.size(), vector<double>(leafNodesSize, 0.0));
+	databaseImgVector.assign(bookNames.size(), vector<double>(leafNodesSize, 0.0));
 
-	for (int fileIdx = 0; fileIdx < files.size(); fileIdx++) {
+	for (int fileIdx = 0; fileIdx < bookNames.size(); fileIdx++) {
 
 		for (int i = 0; i < leafNodesSize; i++) {
 
@@ -442,12 +411,12 @@ void VocabularyTree::saveToFile(const string& filename) {
 	//line 2(tree structure)
 	fout << treeSaveBuff.rdbuf() << endl;
 
-	//line 3(number of total files)
-	fout << files.size() << endl;
+	//line 3(number of total books)
+	fout << bookNames.size() << endl;
 
 	//book names
-	for (const auto& filename : files) {
-		fout << filename << endl;
+	for (const auto& book : bookNames) {
+		fout << book << endl;
 	}
 
 	//center info
@@ -467,7 +436,7 @@ void VocabularyTree::saveToFile(const string& filename) {
 
 
 	//database Image vectors
-	for (int idx = 0; idx < files.size(); idx++) {
+	for (int idx = 0; idx < bookNames.size(); idx++) {
 		for (int leafNode_i = 0; leafNode_i < leafNodes.size(); leafNode_i++) {
 			fout << databaseImgVector[idx][leafNode_i];
 			fout << "|";
