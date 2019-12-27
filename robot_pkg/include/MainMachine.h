@@ -35,7 +35,7 @@ struct DestinationInfo{
 public:
 	MainMachine(ros::NodeHandle& n);
 	~MainMachine();
-	void StartMainLoop();
+	void startMainLoop();
 	
 	void test();
 

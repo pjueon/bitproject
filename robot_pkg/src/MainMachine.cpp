@@ -95,7 +95,7 @@ MainMachine::~MainMachine() {
 }
 
 //============================================================================
-void MainMachine::StartMainLoop() {
+void MainMachine::startMainLoop() {
 	while (currentMode != mode::Quit){
 		mode nextMode = Operation[currentMode]->run();
 		changeMode(nextMode);
