@@ -14,6 +14,8 @@
 
 #include <vector>
 #include <array>
+#include <utility>
+#include <memory>
 #include <cmath>
 #include <iostream>
 #include <algorithm>
@@ -30,13 +32,12 @@ constexpr double PI = CV_PI;
 /////////////////////////////////////////////////////////////////////////////
 //public
 TakePhotoMode::TakePhotoMode(MainMachine* const mainMachine)
-	:OperatingMode(mainMachine, "TakePhoto"), initYaw(0.0), XYConverter(new CoordinateConverter(0.0, 0.0, 1.0))
+	:OperatingMode(mainMachine, "TakePhoto"), initYaw(0.0), 
+	 XYConverter(make_unique<CoordinateConverter>(0.0, 0.0, 1.0))
 {}
 
 //----------------
-TakePhotoMode::~TakePhotoMode() {
-	delete XYConverter;
-}
+TakePhotoMode::~TakePhotoMode() = default;
 
 
 //----------------
@@ -53,6 +54,7 @@ void TakePhotoMode::setInitYaw(double angle){
 //----------------
 void TakePhotoMode::test(){
 	logger->DebugMsg("This is a test code.");
+	getBookshelfPos();
 }  
 
 
@@ -77,7 +79,7 @@ mode TakePhotoMode::run() {
 	sleep(2000);
 
 	auto [bookshelf_x, bookshelf_y] = getBookshelfPos();
-	constexpr double R = 0.95;
+	constexpr double R = 1.00;
 	auto [new_x, new_y] = std::pair<double, double>{ bookshelf_x + R * cos(PI + correctYaw), bookshelf_y + R * sin(PI + correctYaw) };
 
 	logger->DebugMsg("new position : ", new_x, ", ", new_y, ", current position: ", mainMachine->getX(), ", ", mainMachine->getY());
@@ -97,7 +99,7 @@ mode TakePhotoMode::run() {
 
 	mainMachine->stop();
 	logger->DebugMsg("please wait...");	
-	sleep(9000);
+	sleep(10*1000);
 
 	auto boxinfo = getYOLOBoxInfo();
 	auto frame = getPhoto();
@@ -300,24 +302,29 @@ std::pair<double, double> TakePhotoMode::getBookshelfPos(){
 
 	//need to be fixed later	
 	vector<Point> points;
+	points.reserve(4);
 
-	auto pointMaker = [this](double x, double y, double r, double angle) {
-							auto [map_x, map_y] = XYConverter->toMapXY(x + r * cos(angle), y + r * sin(angle));
-							return Point(map_x, map_y);
-					  };
+	double prev_x = current_x, prev_y = current_y;
 
-	points.emplace_back(pointMaker(current_x, current_y, x_range/2, current_yaw + PI/2));
-	auto [tmp_x, tmp_y] = XYConverter->toRealXY(points[0].x, points[0].y);
+	vector<pair<double, double>> offsets = {
+											 {x_range/2, current_yaw + PI/2}, 
+											 {y_range, current_yaw},
+											 { x_range, current_yaw - PI/2},
+											 {y_range, current_yaw + PI}
+																			};
+	pair<double , double > nextXY;
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, y_range, current_yaw));
-	tie(tmp_x, tmp_y) = XYConverter->toRealXY(points[1].x, points[1].y);
+	for(const auto& p : offsets){
+		const auto& [r, angle] = p;
+		nextXY = make_pair( prev_x + r * cos(angle), prev_y + r * sin(angle));
+		const auto [map_x, map_y] = XYConverter->toMapXY(nextXY);
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, x_range, current_yaw - PI/2));
-	tie(tmp_x, tmp_y) = XYConverter->toRealXY(points[2].x, points[2].y);
+		points.emplace_back(map_x, map_y);
+		tie(prev_x, prev_y) = nextXY;
+	}
 
-	points.emplace_back(pointMaker(tmp_x, tmp_y, y_range, current_yaw + PI));
 
-	const Point* pts[1] = { &(points[0]) };
+	const Point* pts[1] = { &points.front() };
 	int npts[] = { 4 };
 	
 	fillPoly(mask, pts, npts, 1, Scalar(255));
@@ -330,6 +337,15 @@ std::pair<double, double> TakePhotoMode::getBookshelfPos(){
 	Mat maskedMap = mask & map;
 	Mat labels, stats, centroids;
 
+/*
+	//DEBUG
+	imshow("mask", mask);
+	imshow("maskedMap", maskedMap);
+
+	waitKey();
+	destroyAllWindows();
+	//DEBUG
+*/
 	int cnt = connectedComponentsWithStats(maskedMap, labels, stats, centroids);
 
 	if(cnt <= 1) {
@@ -407,8 +423,6 @@ Mat TakePhotoMode::getFrontLaserScan(double frontRange, double sideRange){
 
 	int x_offset = 0;
 	int y_offset = scanRange_y/2;
-
-
 
 	Mat laserScanMap(Mat::zeros(Size(scanRange_x,scanRange_y), CV_8UC1));
 

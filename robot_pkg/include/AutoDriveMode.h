@@ -3,8 +3,10 @@
 #define AUTO_DRIVEMODE_H
 
 #include "Mode.h"
+
 #include <vector>
 #include <utility>
+#include <memory>
 
 class PathFinder;
 
@@ -20,8 +22,7 @@ public:
 
 private:  
 	std::vector<std::pair<double, double>> route;
-	PathFinder* pathFinder;
-
+	const std::unique_ptr<PathFinder> pathFinder;
 
 	void printCurrPosition() const;
 	bool didArrive(double goalX, double goalY) const;
@@ -32,7 +33,7 @@ private:
 
 	//==Temporary==
 	int currRouteIdx;
-	vector<vector<pair<double, double>>> destinationList;
+	std::vector<std::vector<std::pair<double, double>>> destinationList;
 	//=============
 };
 

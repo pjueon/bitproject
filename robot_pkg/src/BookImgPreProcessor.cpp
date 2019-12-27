@@ -19,7 +19,11 @@ BookImgPreProcessor::BookImgPreProcessor()
 
 
 void BookImgPreProcessor::setImg(const cv::Mat& img) {
-	resizeIfNecessary(img, srcImg, 850, 1300);
+//	resizeIfNecessary(img, srcImg, 850, 1800);
+	
+	double resizingFactor = 1000/double(img.rows);
+	
+	resize(img, srcImg, Size(int(resizingFactor*img.cols), int(resizingFactor*img.rows)));
 	height = srcImg.rows;
 	width = srcImg.cols;
 	bookAreas.clear();
@@ -195,7 +199,8 @@ void BookImgPreProcessor::findBookAreas(const vector<Vec4i>& sortedVLines, vecto
 		// 책이 아닌 영역을 제거하기
 		{
 			// 책 영역이라고 추측되는 영역에서 엣지성분이 특정픽셀수 이하이면 책이 아닌것으로 판단
-			const auto pixelThreshold = static_cast<int>(0.5 * width); // px
+			//const auto pixelThreshold = static_cast<int>(0.5 * width); // px
+			const auto pixelThreshold = static_cast<int>(0.5 * height); // px
 
 			Mat mask = Mat::zeros(srcImg.size(), CV_8UC1);
 
@@ -320,7 +325,7 @@ void BookImgPreProcessor::run() {
 	// Hough Transform 파라미터
 	constexpr double rho = 1; // distance resolution in pixels of the Hough grid
 	constexpr double theta = CV_PI / 180; // angular resolution in radians of the Hough grid
-	constexpr int houghThreshold = 100;	 // minimum number of votes(intersections in Hough grid cell)
+	constexpr int houghThreshold = 150;	 // minimum number of votes(intersections in Hough grid cell)
 	constexpr double minLineLength = 150; //minimum number of pixels making up a line
 	constexpr double maxLineGap = 40;	//maximum gap in pixels between connectable line segments
 
@@ -340,7 +345,7 @@ void BookImgPreProcessor::run() {
 	Mat equalized;
 	equalizeHist( grayImg, equalized);
 
-	addWeighted(grayImg, 0.2, equalized, 0.8, 0, grayImg);
+	addWeighted(grayImg, 0.2, equalized, 0.85, 0, grayImg);
 
 	Mat blured1, blured2;
 
@@ -358,7 +363,8 @@ void BookImgPreProcessor::run() {
 	//morphologyEx(edgeImg, edgeImg, MORPH_CLOSE, Mat());
 
 	//짧은 엣지 제거
-	removeShortEdges(220);
+	removeShortEdges(285);
+
 
 	// 허프 변환으로 직선 추출
 	vector<Vec4i> lines;
@@ -387,7 +393,7 @@ void BookImgPreProcessor::run() {
 	sort(vLines.begin(), vLines.end(), cmpX);
 
 	// 세로선들 사이의 갭이 일정 값 이하이면 무시
-	const int GapThreshold = cvRound(width / 50);
+	const int GapThreshold = cvRound(height / 50);
 	//getBookImgsvector<Vec<Point, 4>> bookAreas;
 	vector<Vec4i> boarderLines;
 
