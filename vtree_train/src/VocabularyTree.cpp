@@ -243,7 +243,7 @@ void  VocabularyTree::setBookImgs(const std::vector<cv::Mat>& bookImgs, const st
 
 	bookNameVSIdx.reserve(this->bookNames.size());
 	for (int idx = 0; idx < this->bookNames.size(); idx++) {
-		bookNameVSIdx[this->bookNames[idx]] = idx;
+		bookNameVSIdx.emplace(this->bookNames[idx], idx);
 	}
 
 	// 이미지 파일들 불러와서 특징점 추출후 vector<Data>에 추가
