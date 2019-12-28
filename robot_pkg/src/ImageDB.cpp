@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <vector>
 #include <set>
-#include <bitset>
+//#include <bitset>
 #include <chrono>
 
 using namespace std;
@@ -19,38 +19,23 @@ using namespace cv;
 
 //============================Node============================
 
-ImageDB::Node::Node(size_t _K, int _currLevel, ImageDB* _master, size_t _DATA_DIMENSION)
+ImageDB::Node::Node(size_t _K, int _currLevel, ImageDB& _master, size_t _DATA_DIMENSION)
 	:K(_K), DATA_DIMENSION(_DATA_DIMENSION), currLevel(_currLevel), centers(K, std::vector<uchar>(DATA_DIMENSION, 0)),
-	parent(nullptr), children(K, nullptr), master(_master), leafNodeID(-1), nodeID(0)
+	parent(nullptr), children(K), master(_master), leafNodeID(-1), nodeID(0)
 {}
 
-ImageDB::Node::~Node() {
-	for (auto& child : children) {
-		delete child;
-	}
-}
-
-unsigned int ImageDB::Node::getDistance(const std::vector<uchar>& data1, const std::vector<uchar>& data2) const {
-	//Hamming distance
-	unsigned int ret = 0;
-	for (int i = 0; i < DATA_DIMENSION; i++) {
-		ret += static_cast<unsigned int>(bitset<8>(data1[i] ^ data2[i]).count());
-	}
-	return ret;
-}
+ImageDB::Node::~Node() = default;
 
 int ImageDB::Node::findK(const vector<uchar>& input) const {
 	int ret = 0;
-	unsigned int minValue = 300;
+	size_t minValue = 300;
 
 	for (int k = 0; k < K; k++) {
-		unsigned int value = getDistance(centers[k], input);
-
+		auto value = hammigDistance(centers[k], input);
 		if (value < minValue) {
 			ret = k;
 			minValue = value;
 		}
-
 	}
 
 	return ret;
@@ -62,13 +47,14 @@ bool ImageDB::Node::isLeafNode() const {
 
 void ImageDB::Node::buildFromFile() {
 	char data;
-	vector<Node*> newChildren(K, nullptr);
+	vector<unique_ptr<Node>> newChildren(K);
+
 	stringstream ss;
 	int k = 0;
 	for (auto& child : newChildren) {
 		while (true) {
-			master->treeImportBuff >> data;
-			auto pos = master->treeImportBuff.tellg();
+			master.treeImportBuff >> data;
+			auto pos = master.treeImportBuff.tellg();
 
 			if (data == ')') {
 
@@ -79,14 +65,14 @@ void ImageDB::Node::buildFromFile() {
 			}
 			else if (data == '(') {
 				char nextData;
-				master->treeImportBuff >> nextData;
+				master.treeImportBuff >> nextData;
 				// reset the position
-				master->treeImportBuff.seekg(pos);
+				master.treeImportBuff.seekg(pos);
 
-				child = new Node(K, currLevel + 1, master, DATA_DIMENSION);
+				child = make_unique<Node>(K, currLevel + 1, master, DATA_DIMENSION);
 
 				ss >> child->nodeID;
-				child->centers = master->centerInfo[static_cast<int>(child->nodeID)];
+				child->centers = master.centerInfo[static_cast<int>(child->nodeID)];
 
 
 
@@ -94,8 +80,8 @@ void ImageDB::Node::buildFromFile() {
 				ss.str("");
 
 				if (nextData == ')') {
-					child->leafNodeID = static_cast<int>(master->leafNodes.size());
-					master->leafNodes.emplace_back(this);
+					child->leafNodeID = static_cast<int>(master.leafNodes.size());
+					master.leafNodes.emplace_back(this);
 				}
 				else {
 					child->leafNodeID = -1;
@@ -108,10 +94,6 @@ void ImageDB::Node::buildFromFile() {
 		}
 	}
 
-	for (auto& child : children) {
-		delete child;
-	}
-
 	children = move(newChildren);
 }
 
@@ -122,36 +104,27 @@ void ImageDB::Node::buildFromFile() {
 //==========================ImageDB===========================
 ImageDB::ImageDB()
 	: K(0), L(0), DATA_DIMENSION(0),
-	root_node(nullptr)
+	root_node()
 {}
 
-ImageDB::~ImageDB() {
-	delete root_node;
-}
+ImageDB::~ImageDB() = default;
 
 
-int ImageDB::findNearistLeafNode(const vector<uchar>& input) const {
-	// returns leaf node number
-	Node* node = root_node;
-	int k = 0;
-
-	while (true) {
-		k = node->findK(input);
-
+int ImageDB::findNearistLeafNode(const std::unique_ptr<Node>& node, const std::vector<unsigned char>& input) const {
 		if (node->isLeafNode()) {
 			return node->leafNodeID;
 		}
 		else {
-			node = node->children[k];
+			auto k = node->findK(input);
+			return findNearistLeafNode(node->children.at(k), input);
 		}
-	}
 }
 
 string ImageDB::findImg(const vector<vector<uchar>>& input) const {
 	vector<int> travelResult(leafNodes.size(), 0);
 
 	for (const auto& v : input) {
-		int node_num = findNearistLeafNode(v);
+		int node_num = findNearistLeafNode(root_node, v);
 		travelResult[node_num]++;
 	}
 
@@ -227,6 +200,7 @@ std::string ImageDB::search(const cv::Mat& img) const {
 
 
 string ImageDB::search(const std::string& filename) const {
+	// 파일 열기
 	Mat src = imread(filename, IMREAD_GRAYSCALE);
 
 	if (src.empty()) {
@@ -238,9 +212,10 @@ string ImageDB::search(const std::string& filename) const {
 }
 
 void ImageDB::load(const std::string& filename) {
+
 	ifstream fin(filename);
 	if (!fin.is_open()) {
-		cerr << "fail to open " << filename << endl;
+		cerr << "couldn't open" << filename << endl;
 		return;
 	}
 
@@ -256,7 +231,10 @@ void ImageDB::load(const std::string& filename) {
 
 		{
 			stringstream ss(lines[0]);
-			ss >> new_K >> new_L >> new_DATA_DIMENSION >> total_num_of_leafNodes;
+			ss >> new_K;
+			ss >> new_L;
+			ss >> new_DATA_DIMENSION;
+			ss >> total_num_of_leafNodes;
 		}
 
 		K = new_K;
@@ -265,39 +243,30 @@ void ImageDB::load(const std::string& filename) {
 		cout << "K: " << K << ", L: " << L << ", DATA_DIMENSION: " << DATA_DIMENSION << endl;
 		cout << "total_num_of_leafNodes: " << total_num_of_leafNodes << endl;
 
-		if (root_node != nullptr) {
-			delete root_node;
-		}
-
-		root_node = new Node(K, 0, this, DATA_DIMENSION);
-
 
 		//tree structure		
 		treeImportBuff.str(lines[1]);
 
-		if (root_node != nullptr) delete root_node;
 
-		root_node = new Node(new_K, 0, this, new_DATA_DIMENSION);
+		root_node = make_unique<Node>(new_K, 0, *this, new_DATA_DIMENSION);
 		treeImportBuff >> root_node->nodeID;
 
 		char tmp;
 		treeImportBuff >> tmp; // '('
 
-		//cout << "[DEBUG]트리 구조 읽어오기 성공 " << endl;
+		cout << "[DEBUG]트리 구조 읽어오기 성공 " << endl;
 
 		//files
 		int num_of_book_Imgs = stoi(lines[2]);
 		cout << "number of book imgs = " << num_of_book_Imgs << endl;
 		int line_num = 3;
 
-		//cout << "===[Booknames]===" << endl;
 		for (; line_num < 3 + num_of_book_Imgs; line_num++) {
-			//cout << lines[line_num] << endl;
 			files.push_back(lines[line_num]);
 		}
-		//cout << "================" << endl;
 
-		//cout << "[DEBUG]파일명 읽어오기 성공" << endl;
+
+		cout << "[DEBUG]파일명 읽어오기 성공" << endl;
 
 		int l1 = line_num;
 
@@ -319,7 +288,7 @@ void ImageDB::load(const std::string& filename) {
 
 		root_node->centers = centerInfo[static_cast<int>(root_node->nodeID)];
 
-		//cout << "[DEBUG]center 정보 읽어오기 성공" << endl;
+		cout << "[DEBUG]center 정보 읽어오기 성공" << endl;
 
 		//leaf node count
 		{
@@ -335,7 +304,7 @@ void ImageDB::load(const std::string& filename) {
 			}
 
 		}
-		//cout << "[DEBUG]leaf node count 정보 읽어오기 성공" << endl;
+		cout << "[DEBUG]leaf node count 정보 읽어오기 성공" << endl;
 
 
 		//weights
@@ -352,7 +321,7 @@ void ImageDB::load(const std::string& filename) {
 			}
 
 		}
-		//cout << "[DEBUG]weights 정보 읽어오기 성공" << endl;
+		cout << "[DEBUG]weights 정보 읽어오기 성공" << endl;
 		line_num++;
 
 		//databaseImgVector
@@ -371,15 +340,13 @@ void ImageDB::load(const std::string& filename) {
 		}
 		cout << "[DEBUG]databaseImgVector 정보 읽어오기 성공" << endl;
 		
-		cout << "[DEBUG] line_num=" << line_num << ", lines.size()=" << lines.size() << endl;
+
 		// build
 		root_node->buildFromFile();
 	}
 	catch (exception & e) {
 		cerr << "[Exception from load()]" << e.what() << endl;
 	}
-
-	cout << "[ImageDB] Load complite" << endl;
 }
 
 //==========================ImageDB===========================

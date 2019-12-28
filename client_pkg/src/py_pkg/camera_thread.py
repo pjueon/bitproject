@@ -70,10 +70,10 @@ class Worker(QThread):
             self.btm_y = result['bottomright']['y']
 
             self.confidence = result['confidence']
-            self.label = result['label'] + " " + str(round(self.confidence, 3))
+            self.label = result['label']# + " " + str(round(self.confidence, 3))
             self.class_label = result['label']
-            self.text = '{}: {:.0f}%'.format(self.class_label, self.confidence * 100)
-            
+            #self.text = '{}: {:.0f}%'.format(self.class_label, self.confidence * 100)
+
             if self.class_label == 'bookshelf' and (self.btm_y - self.top_y) * (self.btm_x - self.top_x) >= self.resize_width * self.resize_height * 0.2:
                 self.bound_flag = True
 

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
+#include <bitset>
 #include <opencv2/opencv.hpp>
 
 #include "UtilityFunctions.h"
@@ -19,7 +20,6 @@ double Distance(double x1, double y1, double x2, double y2) {
 
 //----------------------------------------------------------
 double fitAngleInRange(double angle) {
-
 	if (-PI < angle && angle <= PI) {
 		return angle;
 	}
@@ -71,9 +71,6 @@ void MatTo2DVector(const Mat& src, vector<vector<unsigned char>>& output) {
 
 //----------------------------------------------------------
 void resizeIfNecessary(const Mat& input, Mat& output, int minimumLength, int maximumLength) {
-	//constexpr int minimumLength = 200; // px
-	//constexpr int maximumLength = 1500; // px
-
 	const int img_width = input.cols;
 	const int img_height = input.rows;
 
@@ -100,4 +97,13 @@ void resizeIfNecessary(const Mat& input, Mat& output, int minimumLength, int max
 	new_height = static_cast<int> (img_height * resizingFactor);
 
 	resize(input, output, Size(new_width, new_height));
+}
+
+//----------------------------------------------------------
+std::size_t hammigDistance(const std::vector<uchar>& data1, const std::vector<uchar>& data2) {
+	size_t ret = 0;
+	for (int i = 0; i < data1.size(); i++) {
+		ret += bitset<8>(data1[i] ^ data2[i]).count();
+	}
+	return ret;
 }

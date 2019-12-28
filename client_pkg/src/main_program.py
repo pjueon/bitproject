@@ -313,7 +313,7 @@ if __name__ == '__main__':
 
     options = {"pbLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_2class_yolo2.pb"),
                "metaLoad" : fixpath("~/catkin_ws/src/bitproject/built_graph/book_2class_yolo2.meta"),
-               "threshold" : 0.5
+               "threshold" : 0.25
                }
 
     tfnet = TFNet(options)

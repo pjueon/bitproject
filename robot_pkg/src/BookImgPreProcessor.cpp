@@ -325,7 +325,7 @@ void BookImgPreProcessor::run() {
 	// Hough Transform 파라미터
 	constexpr double rho = 1; // distance resolution in pixels of the Hough grid
 	constexpr double theta = CV_PI / 180; // angular resolution in radians of the Hough grid
-	constexpr int houghThreshold = 100;	 // minimum number of votes(intersections in Hough grid cell)
+	constexpr int houghThreshold = 150;	 // minimum number of votes(intersections in Hough grid cell)
 	constexpr double minLineLength = 150; //minimum number of pixels making up a line
 	constexpr double maxLineGap = 40;	//maximum gap in pixels between connectable line segments
 
@@ -363,7 +363,7 @@ void BookImgPreProcessor::run() {
 	//morphologyEx(edgeImg, edgeImg, MORPH_CLOSE, Mat());
 
 	//짧은 엣지 제거
-	removeShortEdges(260);
+	removeShortEdges(285);
 
 
 	// 허프 변환으로 직선 추출

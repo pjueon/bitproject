@@ -22,8 +22,9 @@ class Book_search(QThread):
         print("============================= End Book_search Thread ===========================\n\n")
 
     def callback(self, data):
-        print(data.data)
+        #print(data.data)
         self.parent.ui.listwidget.addItem(data.data)
+        self.parent.ui.listwidget.addItem("\n")
         self.parent.ui.listwidget.scrollToBottom()
 
 def main(args):

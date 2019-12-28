@@ -132,7 +132,7 @@ class Ui_Form(object):
         self.listwidget = QtWidgets.QListWidget()
         self.listwidget.setMinimumSize(QtCore.QSize(895, 315))
         self.listwidget.setMaximumSize(QtCore.QSize(895, 315))
-        self.button_Grid.addWidget(self.listwidget, 5, 0, -1, -1)
+        self.button_Grid.addWidget(self.listwidget, 5, 0, 1, -1)
 
         self.Camera_View = QtWidgets.QGraphicsView(self.horizontalLayoutWidget)
         self.Camera_View.setMinimumSize(QtCore.QSize(895, 475))

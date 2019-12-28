@@ -95,7 +95,7 @@ MainMachine::~MainMachine() {
 }
 
 //============================================================================
-void MainMachine::StartMainLoop() {
+void MainMachine::startMainLoop() {
 	while (currentMode != mode::Quit){
 		mode nextMode = Operation[currentMode]->run();
 		changeMode(nextMode);
@@ -106,7 +106,7 @@ void MainMachine::StartMainLoop() {
 void MainMachine::test(){
 	logger->DebugMsg("===test start===");
 
-	Operation[mode::ImageProcess]->test();
+	Operation[mode::TakePhoto]->test();
 	
 	logger->DebugMsg("===test end===");
 }
